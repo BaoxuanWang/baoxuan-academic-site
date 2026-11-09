@@ -25,6 +25,8 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v4
+      - name: Refresh daily publications and citations
+        run: node scripts/update-academic-data.mjs
       - name: Refresh daily gold history
         run: node scripts/update-gold-history.mjs
       - name: Configure Pages
@@ -36,3 +38,4 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+

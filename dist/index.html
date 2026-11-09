@@ -135,7 +135,7 @@
               <div class="metric"><span class="metric-label" data-zh="他引次数" data-en="External citations">他引次数</span><strong id="scholar-citations-external">—</strong><span class="metric-note">Google Scholar · <span id="scholar-external-updated">待录入</span></span></div>
             </div>
             <div class="data-note"><span class="status-dot" id="data-status-dot"></span><span id="data-status" aria-live="polite">正在获取最新公开数据…</span></div>
-            <p class="method-note" data-zh="OpenAlex：逐篇匹配 ORCID 作品的 DOI，累加已收录作品的引用；他引扣除可识别的本人署名论文引用，打开页面时更新。Google Scholar：按主页数据手动维护并标注日期，未取得的数字显示为“—”。两库收录范围不同，数字可能不同。" data-en="OpenAlex: DOI-matched ORCID works; external citations exclude identifiable citing papers bearing my authorship. Refreshed on page load. Google Scholar: manually updated from the profile with a stated date; unavailable values show as '—'. Coverage differs between sources.">OpenAlex：逐篇匹配 ORCID 作品的 DOI，累加已收录作品的引用；他引扣除可识别的本人署名论文引用，打开页面时更新。Google Scholar：按主页数据手动维护并标注日期，未取得的数字显示为“—”。两库收录范围不同，数字可能不同。</p>
+            <p class="method-note" data-zh="ORCID 论文与 OpenAlex 引用每天自动生成快照，打开页面时再获取一次最新公开数据；他引扣除可识别的本人署名论文引用。Google Scholar 按主页数据手动维护并标注日期。期刊 IF 与分区按标注年度维护，不进行无可靠数据源的自动抓取。" data-en="ORCID works and OpenAlex citations are refreshed in a daily snapshot and checked again when the page opens; external citations exclude identifiable citing papers bearing my authorship. Google Scholar is maintained manually with a stated date. Journal impact factors and rankings follow their labelled annual editions.">ORCID 论文与 OpenAlex 引用每天自动生成快照，打开页面时再获取一次最新公开数据；他引扣除可识别的本人署名论文引用。Google Scholar 按主页数据手动维护并标注日期。期刊 IF 与分区按标注年度维护，不进行无可靠数据源的自动抓取。</p>
             <div class="publication-tools">
               <label class="search-wrap"><span class="sr-only" data-zh="搜索论文" data-en="Search publications">搜索论文</span><span aria-hidden="true">⌕</span><input id="works-search" type="search" placeholder="搜索标题、期刊或 DOI" autocomplete="off" /></label>
               <div class="filter-row" role="group" aria-label="Publication type">
@@ -183,7 +183,8 @@
               <div class="chart-card">
                 <div class="chart-head"><div><span class="chart-kicker" data-zh="股价走势" data-en="PRICE TREND">股价走势</span><h3 id="chart-name">—</h3><p id="chart-reason"></p></div><div class="chart-quote"><strong id="chart-price">—</strong><span id="chart-change">—</span></div></div>
                 <div class="chart-toolbar"><div class="range-tabs" role="group" aria-label="Chart range"><button type="button" class="range-button is-active" data-range="short" data-zh="近 1 月" data-en="1 month">近 1 月</button><button type="button" class="range-button" data-range="long" data-zh="近 1 年" data-en="1 year">近 1 年</button></div><span id="stock-time">—</span></div>
-                <div class="price-chart" id="price-chart" role="img" aria-label="Price trend chart"><span data-zh="正在加载走势…" data-en="Loading trend…">正在加载走势…</span></div>
+                <div class="price-chart" id="price-chart" role="group" aria-label="Price trend chart"><span data-zh="正在加载走势…" data-en="Loading trend…">正在加载走势…</span></div>
+                <p class="chart-hint" data-zh="移动鼠标或点击图中任意位置，查看最近交易日的收盘价。" data-en="Move or click anywhere on the chart to inspect the nearest daily close.">移动鼠标或点击图中任意位置，查看最近交易日的收盘价。</p>
                 <div class="trend-summary" id="trend-summary"></div>
                 <a class="report-link" id="company-report" href="https://disc.static.szse.cn/disc/disk03/finalpage/2026-03-28/7c7c2787-dabb-4ae2-8802-72b5b47a462a.PDF" target="_blank" rel="noopener noreferrer"><span data-zh="查看公司公开资料" data-en="Company source">查看公司公开资料</span> ↗</a>
               </div>
@@ -200,7 +201,8 @@
               <div class="gold-card"><div><span class="gold-symbol">Au</span><div><span class="chart-kicker" data-zh="国际现货黄金 · 人民币折算" data-en="SPOT GOLD · CNY CONVERSION">国际现货黄金 · 人民币折算</span><h3 data-zh="实时参考金价与历史走势" data-en="Live gold price & history">实时参考金价与历史走势</h3></div></div><div class="gold-value"><strong id="gold-price">—</strong><span id="gold-time">—</span></div></div>
               <div class="gold-chart-card">
                 <div class="gold-chart-toolbar"><div class="range-tabs" role="group" aria-label="Gold chart range"><button type="button" class="gold-range-button is-active" data-gold-range="short" data-zh="近 1 月" data-en="1 month">近 1 月</button><button type="button" class="gold-range-button" data-gold-range="long" data-zh="近 1 年" data-en="1 year">近 1 年</button></div><span id="gold-history-time">—</span></div>
-                <div class="price-chart gold-chart" id="gold-chart" role="img" aria-label="Gold price trend chart"><span data-zh="正在加载金价走势…" data-en="Loading gold trend…">正在加载金价走势…</span></div>
+                <div class="price-chart gold-chart" id="gold-chart" role="group" aria-label="Gold price trend chart"><span data-zh="正在加载金价走势…" data-en="Loading gold trend…">正在加载金价走势…</span></div>
+                <p class="chart-hint" data-zh="移动鼠标或点击图中任意位置，查看每日黄金收盘价。" data-en="Move or click anywhere on the chart to inspect each daily gold close.">移动鼠标或点击图中任意位置，查看每日黄金收盘价。</p>
                 <div class="trend-summary" id="gold-summary"></div>
               </div>
             </div>
@@ -233,3 +235,4 @@
     <script src="./stocks.js"></script>
   </body>
 </html>
+

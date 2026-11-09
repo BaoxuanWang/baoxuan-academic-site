@@ -65,35 +65,109 @@
     return rows.slice(-count).reduce((sum, row) => sum + row.close, 0) / count;
   }
 
+  function svgElement(svg, tag, attributes = {}, value = '') {
+    const node = document.createElementNS(svg.namespaceURI, tag);
+    for (const [key, attribute] of Object.entries(attributes)) node.setAttribute(key, attribute);
+    if (value) node.textContent = value;
+    return node;
+  }
+
+  function renderInteractiveChart(root, points, options) {
+    const width = 680, height = 260;
+    const margin = { left: 67, right: 18, top: 18, bottom: 45 };
+    const plotWidth = width - margin.left - margin.right;
+    const plotHeight = height - margin.top - margin.bottom;
+    const values = points.map((row) => row.close);
+    const low = Math.min(...values), high = Math.max(...values);
+    const padding = Math.max((high - low) * .12, high * .008, .01);
+    const minimum = low - padding, maximum = high + padding;
+    const x = (index) => margin.left + index / (points.length - 1) * plotWidth;
+    const y = (price) => margin.top + (maximum - price) / (maximum - minimum) * plotHeight;
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    svg.setAttribute('preserveAspectRatio', 'none');
+    svg.setAttribute('aria-hidden', 'true');
+
+    for (let index = 0; index < 5; index += 1) {
+      const yy = margin.top + index / 4 * plotHeight;
+      const price = maximum - index / 4 * (maximum - minimum);
+      svg.append(
+        svgElement(svg, 'line', { x1: margin.left, x2: width - margin.right, y1: yy, y2: yy, stroke: options.grid, 'stroke-width': 1 }),
+        svgElement(svg, 'text', { x: margin.left - 10, y: yy + 4, fill: options.muted, 'font-size': 10, 'text-anchor': 'end' }, options.tick(price))
+      );
+    }
+
+    const tickIndexes = [...new Set([0, 1, 2, 3, 4].map((step) => Math.round(step / 4 * (points.length - 1))))];
+    for (const index of tickIndexes) {
+      const xx = x(index);
+      const [year, month, day] = points[index].date.split('-');
+      const label = options.longRange ? `${year}-${month}` : `${month}-${day}`;
+      svg.append(
+        svgElement(svg, 'line', { x1: xx, x2: xx, y1: height - margin.bottom, y2: height - margin.bottom + 5, stroke: options.axis, 'stroke-width': 1 }),
+        svgElement(svg, 'text', { x: xx, y: height - 22, fill: options.muted, 'font-size': 10, 'text-anchor': 'middle' }, label)
+      );
+    }
+    svg.append(
+      svgElement(svg, 'line', { x1: margin.left, x2: margin.left, y1: margin.top, y2: height - margin.bottom, stroke: options.axis, 'stroke-width': 1 }),
+      svgElement(svg, 'line', { x1: margin.left, x2: width - margin.right, y1: height - margin.bottom, y2: height - margin.bottom, stroke: options.axis, 'stroke-width': 1 }),
+      svgElement(svg, 'text', { x: 14, y: margin.top + plotHeight / 2, fill: options.muted, 'font-size': 10, 'text-anchor': 'middle', transform: `rotate(-90 14 ${margin.top + plotHeight / 2})` }, options.yLabel),
+      svgElement(svg, 'text', { x: margin.left + plotWidth / 2, y: height - 4, fill: options.muted, 'font-size': 10, 'text-anchor': 'middle' }, t('日期', 'Date'))
+    );
+
+    const path = points.map((row, index) => `${index ? 'L' : 'M'}${x(index).toFixed(1)},${y(row.close).toFixed(1)}`).join(' ');
+    svg.append(
+      svgElement(svg, 'path', { d: `${path} L${x(points.length - 1)},${height - margin.bottom} L${x(0)},${height - margin.bottom} Z`, fill: options.fill }),
+      svgElement(svg, 'path', { d: path, fill: 'none', stroke: options.color, 'stroke-width': 2.3, 'vector-effect': 'non-scaling-stroke' })
+    );
+    for (let index = 0; index < points.length; index += 1) {
+      svg.append(svgElement(svg, 'circle', { cx: x(index), cy: y(points[index].close), r: points.length < 40 ? 2 : 1.15, fill: options.color, opacity: points.length < 40 ? .68 : .42 }));
+    }
+
+    const focus = svgElement(svg, 'g', { display: 'none', 'pointer-events': 'none' });
+    const vertical = svgElement(svg, 'line', { y1: margin.top, y2: height - margin.bottom, stroke: options.color, 'stroke-width': 1, 'stroke-dasharray': '4 4', opacity: .6 });
+    const marker = svgElement(svg, 'circle', { r: 4.5, fill: '#fff', stroke: options.color, 'stroke-width': 2.2 });
+    const tooltip = svgElement(svg, 'g');
+    const tooltipBox = svgElement(svg, 'rect', { width: 154, height: 39, rx: 3, fill: '#173d49', opacity: .96 });
+    const tooltipDate = svgElement(svg, 'text', { x: 9, y: 15, fill: '#bcd4ce', 'font-size': 9 });
+    const tooltipValue = svgElement(svg, 'text', { x: 9, y: 30, fill: '#fff', 'font-size': 12, 'font-weight': 700 });
+    tooltip.append(tooltipBox, tooltipDate, tooltipValue);
+    focus.append(vertical, marker, tooltip);
+    svg.append(focus);
+
+    function showPoint(index) {
+      const row = points[index], xx = x(index), yy = y(row.close);
+      vertical.setAttribute('x1', xx); vertical.setAttribute('x2', xx);
+      marker.setAttribute('cx', xx); marker.setAttribute('cy', yy);
+      const tooltipX = xx + 10 + 154 > width - margin.right ? xx - 164 : xx + 10;
+      const tooltipY = Math.max(margin.top + 3, Math.min(yy - 47, height - margin.bottom - 42));
+      tooltip.setAttribute('transform', `translate(${tooltipX} ${tooltipY})`);
+      tooltipDate.textContent = row.date;
+      tooltipValue.textContent = `${options.value(row.close)} · ${t('日收盘', 'daily close')}`;
+      focus.setAttribute('display', 'block');
+      root.setAttribute('aria-label', `${options.name}: ${row.date}, ${options.value(row.close)}`);
+    }
+
+    function pointFromEvent(event) {
+      const bounds = svg.getBoundingClientRect();
+      const coordinate = (event.clientX - bounds.left) / bounds.width * width;
+      return Math.max(0, Math.min(points.length - 1, Math.round((coordinate - margin.left) / plotWidth * (points.length - 1))));
+    }
+    svg.addEventListener('pointermove', (event) => { if (event.pointerType === 'mouse') showPoint(pointFromEvent(event)); });
+    svg.addEventListener('click', (event) => showPoint(pointFromEvent(event)));
+    root.replaceChildren(svg);
+    showPoint(points.length - 1);
+  }
+
   function drawChart(rows) {
     const root = document.getElementById('price-chart');
     if (!rows?.length) { root.textContent = t('走势暂不可用', 'Trend unavailable'); return; }
     const points = range === 'short' ? rows.slice(-22) : rows.slice(-250);
     if (points.length < 2) { root.textContent = t('数据不足', 'Insufficient data'); return; }
-    const values = points.map((row) => row.close);
-    const low = Math.min(...values), high = Math.max(...values), pad = Math.max((high - low) * .12, high * .008);
-    const minimum = low - pad, maximum = high + pad;
-    const x = (i) => 28 + i / (points.length - 1) * 568;
-    const y = (price) => 193 - (price - minimum) / (maximum - minimum) * 164;
-    const path = points.map((row, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(row.close).toFixed(1)}`).join(' ');
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('viewBox', '0 0 620 220');
-    svg.setAttribute('preserveAspectRatio', 'none');
-    for (const lineY of [44, 110, 176]) {
-      const line = document.createElementNS(svg.namespaceURI, 'line');
-      for (const [key, value] of Object.entries({ x1: 28, x2: 596, y1: lineY, y2: lineY, stroke: '#e4eee8', 'stroke-width': 1 })) line.setAttribute(key, value);
-      svg.append(line);
-    }
-    const area = document.createElementNS(svg.namespaceURI, 'path');
-    area.setAttribute('d', `${path} L596,205 L28,205 Z`); area.setAttribute('fill', 'rgba(62,153,136,.10)'); svg.append(area);
-    const line = document.createElementNS(svg.namespaceURI, 'path');
-    line.setAttribute('d', path); line.setAttribute('fill', 'none'); line.setAttribute('stroke', '#258b85'); line.setAttribute('stroke-width', '2.4'); line.setAttribute('vector-effect', 'non-scaling-stroke'); svg.append(line);
-    for (const [label, yy] of [[number(maximum), 21], [number(minimum), 203]]) {
-      const text = document.createElementNS(svg.namespaceURI, 'text');
-      text.setAttribute('x', '30'); text.setAttribute('y', String(yy)); text.setAttribute('fill', '#8aa19b'); text.setAttribute('font-size', '11'); text.textContent = label; svg.append(text);
-    }
-    root.replaceChildren(svg);
-    root.setAttribute('aria-label', `${en() ? selected.en : selected.name}: ${points[0].date} ${number(points[0].close)} – ${points.at(-1).date} ${number(points.at(-1).close)}`);
+    renderInteractiveChart(root, points, {
+      name: en() ? selected.en : selected.name,
+      color: '#258b85', fill: 'rgba(62,153,136,.10)', grid: '#e4eee8', axis: '#a9beb7', muted: '#78938d',
+      longRange: range === 'long', yLabel: t('收盘价（元）', 'Close (CNY)'), tick: (value) => number(value), value: (value) => `¥${number(value)}`
+    });
   }
 
   function renderTrend() {
@@ -231,29 +305,11 @@
     const rows = Array.isArray(history.series) ? history.series.filter((row) => Number.isFinite(Number(row.close))).map((row) => ({ date: row.date, close: Number(row.close) })).sort((a, b) => a.date.localeCompare(b.date)) : [];
     if (rows.length < 2) { root.textContent = t('金价历史暂不可用', 'Gold history unavailable'); summary.replaceChildren(); return; }
     const points = goldRange === 'short' ? rows.slice(-22) : rows.slice(-260);
-    const values = points.map((row) => row.close);
-    const low = Math.min(...values), high = Math.max(...values), pad = Math.max((high - low) * .12, high * .008);
-    const minimum = low - pad, maximum = high + pad;
-    const x = (i) => 28 + i / (points.length - 1) * 568;
-    const y = (price) => 193 - (price - minimum) / (maximum - minimum) * 164;
-    const path = points.map((row, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(row.close).toFixed(1)}`).join(' ');
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('viewBox', '0 0 620 220'); svg.setAttribute('preserveAspectRatio', 'none');
-    for (const lineY of [44, 110, 176]) {
-      const grid = document.createElementNS(svg.namespaceURI, 'line');
-      for (const [key, value] of Object.entries({ x1: 28, x2: 596, y1: lineY, y2: lineY, stroke: '#e9e3d5', 'stroke-width': 1 })) grid.setAttribute(key, value);
-      svg.append(grid);
-    }
-    const area = document.createElementNS(svg.namespaceURI, 'path');
-    area.setAttribute('d', `${path} L596,205 L28,205 Z`); area.setAttribute('fill', 'rgba(199,157,89,.13)'); svg.append(area);
-    const line = document.createElementNS(svg.namespaceURI, 'path');
-    line.setAttribute('d', path); line.setAttribute('fill', 'none'); line.setAttribute('stroke', '#b8873b'); line.setAttribute('stroke-width', '2.4'); line.setAttribute('vector-effect', 'non-scaling-stroke'); svg.append(line);
-    for (const [label, yy] of [[`$${number(maximum)}`, 21], [`$${number(minimum)}`, 203]]) {
-      const text = document.createElementNS(svg.namespaceURI, 'text');
-      text.setAttribute('x', '30'); text.setAttribute('y', String(yy)); text.setAttribute('fill', '#a39377'); text.setAttribute('font-size', '11'); text.textContent = label; svg.append(text);
-    }
-    root.replaceChildren(svg);
-    root.setAttribute('aria-label', `${t('国际现货黄金', 'Spot gold')}: ${points[0].date} $${number(points[0].close)} – ${points.at(-1).date} $${number(points.at(-1).close)}`);
+    renderInteractiveChart(root, points, {
+      name: t('国际现货黄金', 'Spot gold'),
+      color: '#b8873b', fill: 'rgba(199,157,89,.13)', grid: '#e9e3d5', axis: '#c5b99f', muted: '#927f61',
+      longRange: goldRange === 'long', yLabel: t('收盘价（美元/盎司）', 'Close (USD/oz)'), tick: (value) => `$${number(value, 0)}`, value: (value) => `$${number(value)}`
+    });
     const last = rows.at(-1).close;
     const month = rows.length > 22 ? (last / rows.at(-23).close - 1) * 100 : null;
     const year = rows.length > 250 ? (last / rows.at(-251).close - 1) * 100 : null;
@@ -290,3 +346,4 @@
   setInterval(refreshQuotes, 60000);
   setInterval(refreshGold, 30000);
 })();
+

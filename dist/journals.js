@@ -6,7 +6,7 @@ window.BAOXUAN_JOURNALS = {
   "Energies": { impactFactor: 3.9, xinrui: "3", wos: "SCIE", ei: true, source: "https://www.mdpi.com/journal/energies/history", homepage: "https://www.mdpi.com/journal/energies", publisher: "MDPI" },
   "Energy": { impactFactor: 10.1, xinrui: "1", wos: "SCIE", ei: false, source: "https://www.sci365.cn/journals/energy-03605442/", homepage: "https://www.sciencedirect.com/journal/energy", publisher: "Elsevier" },
   "Energy Conversion and Management: X": { impactFactor: 8.8, xinrui: "2", wos: "ESCI", ei: false, source: "https://www.sci365.cn/journals/energy-conversion-and-management-x-25901745/", homepage: "https://www.sciencedirect.com/journal/energy-conversion-and-management-x", publisher: "Elsevier" },
-  "Geoderma": { impactFactor: 7.9, xinrui: "1", wos: "SCIE", ei: false, source: "https://www.sci365.cn/journals/geoderma-00167061/", homepage: "https://www.sciencedirect.com/journal/geoderma", publisher: "Elsevier" },
+  "Geoderma": { impactFactor: 7.9, xinrui: "1", wos: "SCIE", ei: false, source: "https://www.sci365.cn/journals/geoderma-00167061/", homepage: "https://www.sciencedirect.com/journal/geoderma", publisher: "Elsevier", cover: "./assets/journals/geoderma.jpg" },
   "Journal of Offshore Mechanics and Arctic Engineering": { impactFactor: 1.8, xinrui: "3", wos: "SCIE", ei: false, source: "https://www.sci365.cn/journals/journal-of-offshore-mechanics-and-arctic-engineering-transactions-of-the-asme-08927219/", homepage: "https://asmedigitalcollection.asme.org/offshoremechanics", publisher: "ASME" },
   "Journal of Wind Engineering and Industrial Aerodynamics": { impactFactor: 5.1, xinrui: "2", wos: "SCIE", ei: false, source: "https://www.sci365.cn/journals/journal-of-wind-engineering-and-industrial-aerodynamics-01676105/", homepage: "https://www.sciencedirect.com/journal/journal-of-wind-engineering-and-industrial-aerodynamics", publisher: "Elsevier" },
   "Marine Energy Research": { impactFactor: null, xinrui: null, wos: null, ei: false, source: null, homepage: "https://journal.hep.com.cn/mer/EN", publisher: "Higher Education Press" },
@@ -23,7 +23,7 @@ window.BAOXUAN_JOURNALS = {
   "Structures": { impactFactor: 4.9, xinrui: "2", wos: "SCIE", ei: false, source: "https://www.sci365.cn/journals/structures-23520124/", homepage: "https://www.sciencedirect.com/journal/structures", publisher: "Elsevier" },
   "Sustainable Energy Technologies and Assessments": { impactFactor: 7.4, xinrui: "2", wos: "SCIE", ei: false, source: "https://www.sci365.cn/journals/sustainable-energy-technologies-and-assessments-22131388/", homepage: "https://www.sciencedirect.com/journal/sustainable-energy-technologies-and-assessments", publisher: "Elsevier" },
   "Thin-Walled Structures": { impactFactor: 8.3, xinrui: "1", wos: "SCIE", ei: false, source: "https://www.sci365.cn/journals/thin-walled-structures-02638231/", homepage: "https://www.sciencedirect.com/journal/thin-walled-structures", publisher: "Elsevier" },
-  "Transportation Geotechnics": { impactFactor: 6.2, xinrui: "2", wos: "SCIE", ei: false, source: "https://www.sci365.cn/journals/transportation-geotechnics-22143912/", homepage: "https://www.sciencedirect.com/journal/transportation-geotechnics", publisher: "Elsevier" },
+  "Transportation Geotechnics": { impactFactor: 6.2, xinrui: "2", wos: "SCIE", ei: false, source: "https://www.sci365.cn/journals/transportation-geotechnics-22143912/", homepage: "https://www.sciencedirect.com/journal/transportation-geotechnics", publisher: "Elsevier", cover: "./assets/journals/transportation-geotechnics.jpg" },
   "Wind Energy and Engineering Research": { impactFactor: null, xinrui: null, wos: null, ei: false, source: null, homepage: "https://www.sciencedirect.com/journal/wind-energy-and-engineering-research", publisher: "Elsevier" }
 };
 
@@ -59,3 +59,4 @@ const BAOXUAN_JOURNAL_COVERS = {
 for (const [name, file] of Object.entries(BAOXUAN_JOURNAL_COVERS)) {
   if (window.BAOXUAN_JOURNALS[name]) window.BAOXUAN_JOURNALS[name].cover = `./assets/journals/${file}`;
 }
+

@@ -4,18 +4,23 @@
   const journals = window.BAOXUAN_JOURNALS || {};
   const quartiles = window.BAOXUAN_QUARTILES || {};
   const scholar = window.BAOXUAN_SCHOLAR || {};
+  const dailySnapshot = window.BAOXUAN_ACADEMIC_SNAPSHOT || null;
   const xinruiSource = 'https://kjc.cdmc.edu.cn/module/download/downfile.jsp?classid=0&filename=77490d1d77c14c02936e1737479be025.xlsx';
   let language = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'zh';
   let works = window.BAOXUAN_WORKS || [];
   let filter = 'all';
   let orcidLive = false;
-  let citationState = 'loading';
-  let coverage = '';
-  let updatedAt = null;
+  let citationState = dailySnapshot ? 'daily' : 'loading';
+  let coverage = dailySnapshot?.coverage || '';
+  let updatedAt = dailySnapshot?.generatedAt ? new Date(dailySnapshot.generatedAt) : null;
   const t = (zh, en) => language === 'zh' ? zh : en;
   const doiKey = (value) => String(value || '').replace(/^https?:\/\/(?:dx\.)?doi\.org\//i, '').trim().toLowerCase();
   const number = (value) => Number(value).toLocaleString(language === 'zh' ? 'zh-CN' : 'en-US');
   const el = (tag, cls, text) => { const node = document.createElement(tag); if (cls) node.className = cls; if (text != null) node.textContent = text; return node; };
+  if (dailySnapshot) {
+    document.getElementById('citations-total').dataset.value = String(dailySnapshot.citations);
+    document.getElementById('citations-external').dataset.value = String(dailySnapshot.externalCitations);
+  }
 
   function appendQuartiles(root, name, compact = false) {
     const ranks = quartiles[name];
@@ -154,14 +159,16 @@
 
   function renderStatus() {
     const dot = document.getElementById('data-status-dot');
-    dot.classList.toggle('is-live', citationState === 'live');
+    dot.classList.toggle('is-live', citationState === 'live' || citationState === 'daily');
     dot.classList.toggle('is-error', citationState === 'error');
     const time = updatedAt?.toLocaleString(language === 'zh' ? 'zh-CN' : 'en-US', { dateStyle: 'medium', timeStyle: 'short' });
     document.getElementById('data-status').textContent = citationState === 'loading'
       ? t('正在获取最新引用数据…', 'Loading current citation data…')
       : citationState === 'error'
         ? t('引用数据暂不可用；论文列表仍可浏览。', 'Citation data is temporarily unavailable; the works list remains available.')
-        : t(`OpenAlex 本次获取：${time} · 已匹配 ${coverage} 项 ORCID 成果${orcidLive ? '' : ' · 论文列表采用本地备份'}`, `OpenAlex fetched ${time} · ${coverage} ORCID works matched${orcidLive ? '' : ' · Publication list uses a local backup'}`);
+        : citationState === 'daily'
+          ? t(`每日学术数据更新：${time} · OpenAlex 已匹配 ${coverage} 项 ORCID 成果`, `Daily academic update: ${time} · ${coverage} ORCID works matched in OpenAlex`)
+          : t(`OpenAlex 本次获取：${time} · 已匹配 ${coverage} 项 ORCID 成果${orcidLive ? '' : ' · 论文列表采用每日快照'}`, `OpenAlex fetched ${time} · ${coverage} ORCID works matched${orcidLive ? '' : ' · Publication list uses the daily snapshot'}`);
   }
 
   function render() {
@@ -228,7 +235,7 @@
       document.getElementById('citations-external').dataset.value = String(Math.max(0, total - self));
       coverage = `${matched.length}/${dois.length}`;
       updatedAt = new Date(); citationState = 'live';
-    } catch (error) { citationState = 'error'; console.warn('OpenAlex refresh unavailable:', error); }
+    } catch (error) { citationState = dailySnapshot ? 'daily' : 'error'; console.warn('OpenAlex refresh unavailable:', error); }
     render();
   }
 
