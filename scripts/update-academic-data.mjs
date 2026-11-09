@@ -43,7 +43,7 @@ async function citationSnapshot(works) {
   const indexedUrl = new URL('https://api.openalex.org/works');
   indexedUrl.searchParams.set('filter', `doi:${dois.join('|')}`);
   indexedUrl.searchParams.set('per_page', '200');
-  indexedUrl.searchParams.set('select', 'id,doi,cited_by_count');
+  indexedUrl.searchParams.set('select', 'id,doi,cited_by_count,authorships');
   const indexed = await getJson(indexedUrl);
   const doiSet = new Set(dois);
   const matched = (indexed.results || []).filter((work) => doiSet.has(doiKey(work.doi)));
@@ -55,6 +55,7 @@ async function citationSnapshot(works) {
   selfUrl.searchParams.set('filter', `cites:${cited.join('|')},author.orcid:${orcidUrl}`);
   selfUrl.searchParams.set('per_page', '200');
   selfUrl.searchParams.set('select', 'id,authorships,referenced_works');
+  const selfByTarget = new Map(matched.map((work) => [work.id, 0]));
   let selfCitations = 0, page = 1, count = 0;
   do {
     selfUrl.searchParams.set('page', String(page));
@@ -62,11 +63,27 @@ async function citationSnapshot(works) {
     count = Number(citing.meta?.count) || 0;
     for (const work of citing.results || []) {
       if (!(work.authorships || []).some((entry) => entry.author?.orcid === orcidUrl)) continue;
-      for (const reference of work.referenced_works || []) if (ids.has(reference)) selfCitations += 1;
+      for (const reference of work.referenced_works || []) if (ids.has(reference)) {
+        selfCitations += 1;
+        selfByTarget.set(reference, (selfByTarget.get(reference) || 0) + 1);
+      }
     }
     page += 1;
   } while ((page - 1) * 200 < count && page <= 10);
-  return { citations, externalCitations: Math.max(0, citations - selfCitations), coverage: `${matched.length}/${dois.length}` };
+  const workCitations = {};
+  for (const work of matched) {
+    const doi = doiKey(work.doi);
+    const total = Number(work.cited_by_count) || 0;
+    const self = selfByTarget.get(work.id) || 0;
+    const first = (work.authorships || []).find((entry) => entry.author_position === 'first');
+    workCitations[doi] = {
+      id: work.id.split('/').pop(),
+      total,
+      external: Math.max(0, total - self),
+      firstAuthor: first?.author?.orcid === orcidUrl
+    };
+  }
+  return { citations, externalCitations: Math.max(0, citations - selfCitations), coverage: `${matched.length}/${dois.length}`, works: workCitations };
 }
 
 const orcidData = await getJson(`https://pub.orcid.org/v3.0/${orcidId}/works`, { Accept: 'application/vnd.orcid+json' });
@@ -77,4 +94,3 @@ const snapshot = { generatedAt: new Date().toISOString(), source: 'ORCID + OpenA
 const output = `window.BAOXUAN_WORKS=${JSON.stringify(works)};\nwindow.BAOXUAN_ACADEMIC_SNAPSHOT=${JSON.stringify(snapshot)};\n`;
 await writeFile(target, output, 'utf8');
 console.log(`Wrote ${works.length} works and ${citations.coverage} OpenAlex coverage to ${target}`);
-

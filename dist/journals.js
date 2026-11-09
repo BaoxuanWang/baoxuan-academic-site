@@ -37,6 +37,7 @@ const BAOXUAN_JOURNAL_COVERS = {
   "Applied Ocean Research": "applied-ocean-research.jpeg",
   "Cold Regions Science and Technology": "cold-regions-science-technology.jpeg",
   "Composite Structures": "composite-structures.jpg",
+  "Energies": "energies.jpg",
   "Energy": "energy.jpeg",
   "Energy Conversion and Management: X": "energy-conversion-management-x.jpeg",
   "Journal of Offshore Mechanics and Arctic Engineering": "journal-offshore-mechanics-arctic.jpeg",
@@ -47,8 +48,11 @@ const BAOXUAN_JOURNAL_COVERS = {
   "Measurement": "measurement.jpeg",
   "Next Mechanical Engineering": "next-mechanical-engineering.jpeg",
   "Ocean Engineering": "ocean-engineering.jpeg",
+  "Polymers": "polymers.jpg",
+  "Renewable Energy": "renewable-energy.jpg",
   "Renewable and Sustainable Energy Reviews": "renewable-sustainable-energy-reviews.jpeg",
   "SoftwareX": "softwarex.jpeg",
+  "Ships and Offshore Structures": "ships-offshore-structures.jpg",
   "Soil Dynamics and Earthquake Engineering": "soil-dynamics-earthquake-engineering.jpeg",
   "Structures": "structures.jpeg",
   "Sustainable Energy Technologies and Assessments": "sustainable-energy-technologies-assessments.jpeg",
@@ -56,7 +60,35 @@ const BAOXUAN_JOURNAL_COVERS = {
   "Wind Energy and Engineering Research": "wind-energy-engineering-research.jpeg"
 };
 
+const BAOXUAN_LETPUB_NAMES = {
+  "Aerospace Science and Technology": "AEROSPACE SCIENCE AND TECHNOLOGY",
+  "Applied Ocean Research": "APPLIED OCEAN RESEARCH",
+  "Cold Regions Science and Technology": "COLD REGIONS SCIENCE AND TECHNOLOGY",
+  "Composite Structures": "COMPOSITE STRUCTURES",
+  "Energies": "ENERGIES",
+  "Energy": "ENERGY",
+  "Energy Conversion and Management: X": "ENERGY CONVERSION AND MANAGEMENT X",
+  "Geoderma": "GEODERMA",
+  "Journal of Offshore Mechanics and Arctic Engineering": "JOURNAL OF OFFSHORE MECHANICS AND ARCTIC ENGINEERING",
+  "Journal of Wind Engineering and Industrial Aerodynamics": "JOURNAL OF WIND ENGINEERING AND INDUSTRIAL AERODYNAMICS",
+  "Measurement": "MEASUREMENT",
+  "Ocean Engineering": "OCEAN ENGINEERING",
+  "Polymers": "POLYMERS",
+  "Renewable Energy": "RENEWABLE ENERGY",
+  "Renewable and Sustainable Energy Reviews": "RENEWABLE AND SUSTAINABLE ENERGY REVIEWS",
+  "Scientific Reports": "SCIENTIFIC REPORTS",
+  "Ships and Offshore Structures": "SHIPS AND OFFSHORE STRUCTURES",
+  "SoftwareX": "SOFTWAREX",
+  "Soil Dynamics and Earthquake Engineering": "SOIL DYNAMICS AND EARTHQUAKE ENGINEERING",
+  "Structures": "STRUCTURES",
+  "Sustainable Energy Technologies and Assessments": "SUSTAINABLE ENERGY TECHNOLOGIES AND ASSESSMENTS",
+  "Thin-Walled Structures": "THIN-WALLED STRUCTURES",
+  "Transportation Geotechnics": "TRANSPORTATION GEOTECHNICS"
+};
+
 for (const [name, file] of Object.entries(BAOXUAN_JOURNAL_COVERS)) {
   if (window.BAOXUAN_JOURNALS[name]) window.BAOXUAN_JOURNALS[name].cover = `./assets/journals/${file}`;
 }
-
+for (const [name, searchName] of Object.entries(BAOXUAN_LETPUB_NAMES)) {
+  if (window.BAOXUAN_JOURNALS[name]) window.BAOXUAN_JOURNALS[name].letpub = `https://www.letpub.com.cn/index.php?page=journalapp&view=search&searchname=${encodeURIComponent(searchName)}`;
+}

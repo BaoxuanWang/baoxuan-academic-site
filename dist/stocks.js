@@ -35,6 +35,22 @@
     } finally { clearTimeout(timeout); }
   }
 
+  function getJsonp(url) {
+    return new Promise((resolve, reject) => {
+      const callback = `baoxuanStockSearch${Date.now()}${Math.floor(Math.random() * 1000)}`;
+      const script = document.createElement('script');
+      const timer = setTimeout(() => finish(new Error('Search timeout')), 12000);
+      function finish(error, data) {
+        clearTimeout(timer); delete window[callback]; script.remove();
+        if (error) reject(error); else resolve(data);
+      }
+      window[callback] = (data) => finish(null, data);
+      url.searchParams.set('cb', callback);
+      script.src = url; script.onerror = () => finish(new Error('Search unavailable'));
+      document.head.append(script);
+    });
+  }
+
   function make(tag, cls, value) {
     const node = document.createElement(tag);
     if (cls) node.className = cls;
@@ -60,6 +76,44 @@
     root.replaceChildren(fragment);
   }
 
+  function stockFromSearch(item) {
+    const code = String(item.Code || item.UnifiedCode || '').trim();
+    const secid = item.QuoteID || `${item.MktNum}.${code}`;
+    const market = secid.startsWith('1.') ? 'sh' : 'sz';
+    return {
+      code, secid, name: item.Name || code, en: item.Name || code,
+      sector: item.SecurityTypeName || 'A 股', sectorEn: item.SecurityTypeName || 'A-share',
+      reason: '用户查询的 A 股', reasonEn: 'User-selected A-share',
+      report: `https://quote.eastmoney.com/${market}${code}.html`, searched: true
+    };
+  }
+
+  async function searchStocks(query) {
+    const root = document.getElementById('stock-search-results');
+    root.textContent = t('正在查询…', 'Searching…');
+    try {
+      const url = new URL('https://searchapi.eastmoney.com/api/suggest/get');
+      for (const [key, value] of Object.entries({ input: query, type: '14', token: 'D43BF722C8E33BECE2F82C9EB6D8A8D5' })) url.searchParams.set(key, value);
+      const data = await getJsonp(url);
+      const rows = (data.QuotationCodeTable?.Data || []).filter((item) => item.Classify === 'AStock' && /^\d{6}$/.test(item.Code)).slice(0, 8);
+      if (!rows.length) { root.textContent = t('未找到匹配的 A 股。', 'No matching A-share found.'); return; }
+      root.replaceChildren(...rows.map((item) => {
+        const stock = stockFromSearch(item);
+        const button = make('button', 'stock-search-result'); button.type = 'button';
+        button.append(make('span', '', stock.name), make('small', '', `${stock.code} · ${stock.sector}`));
+        button.addEventListener('click', async () => {
+          const existing = stocks.find((entry) => entry.code === stock.code);
+          const chosen = existing || stock;
+          if (!existing) stocks.unshift(chosen);
+          root.replaceChildren();
+          document.getElementById('stock-search-input').value = `${chosen.name} ${chosen.code}`;
+          await fetchQuote(chosen); selectStock(chosen); renderCards();
+        });
+        return button;
+      }));
+    } catch (error) { root.textContent = t('查询服务暂不可用。', 'Search is temporarily unavailable.'); }
+  }
+
   function average(rows, count) {
     if (rows.length < count) return null;
     return rows.slice(-count).reduce((sum, row) => sum + row.close, 0) / count;
@@ -73,8 +127,8 @@
   }
 
   function renderInteractiveChart(root, points, options) {
-    const width = 680, height = 260;
-    const margin = { left: 67, right: 18, top: 18, bottom: 45 };
+    const width = 760, height = 320;
+    const margin = { left: 72, right: 24, top: 24, bottom: 50 };
     const plotWidth = width - margin.left - margin.right;
     const plotHeight = height - margin.top - margin.bottom;
     const values = points.map((row) => row.close);
@@ -85,7 +139,7 @@
     const y = (price) => margin.top + (maximum - price) / (maximum - minimum) * plotHeight;
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-    svg.setAttribute('preserveAspectRatio', 'none');
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
     svg.setAttribute('aria-hidden', 'true');
 
     for (let index = 0; index < 5; index += 1) {
@@ -103,6 +157,7 @@
       const [year, month, day] = points[index].date.split('-');
       const label = options.longRange ? `${year}-${month}` : `${month}-${day}`;
       svg.append(
+        svgElement(svg, 'line', { x1: xx, x2: xx, y1: margin.top, y2: height - margin.bottom, stroke: options.grid, 'stroke-width': 1, opacity: .55 }),
         svgElement(svg, 'line', { x1: xx, x2: xx, y1: height - margin.bottom, y2: height - margin.bottom + 5, stroke: options.axis, 'stroke-width': 1 }),
         svgElement(svg, 'text', { x: xx, y: height - 22, fill: options.muted, 'font-size': 10, 'text-anchor': 'middle' }, label)
       );
@@ -117,17 +172,16 @@
     const path = points.map((row, index) => `${index ? 'L' : 'M'}${x(index).toFixed(1)},${y(row.close).toFixed(1)}`).join(' ');
     svg.append(
       svgElement(svg, 'path', { d: `${path} L${x(points.length - 1)},${height - margin.bottom} L${x(0)},${height - margin.bottom} Z`, fill: options.fill }),
-      svgElement(svg, 'path', { d: path, fill: 'none', stroke: options.color, 'stroke-width': 2.3, 'vector-effect': 'non-scaling-stroke' })
+      svgElement(svg, 'path', { d: path, fill: 'none', stroke: options.color, 'stroke-width': 2.8, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'vector-effect': 'non-scaling-stroke' })
     );
-    for (let index = 0; index < points.length; index += 1) {
-      svg.append(svgElement(svg, 'circle', { cx: x(index), cy: y(points[index].close), r: points.length < 40 ? 2 : 1.15, fill: options.color, opacity: points.length < 40 ? .68 : .42 }));
-    }
+    if (points.length <= 60) for (let index = 0; index < points.length; index += 1) svg.append(svgElement(svg, 'circle', { cx: x(index), cy: y(points[index].close), r: 2.2, fill: '#fff', stroke: options.color, 'stroke-width': 1.3, opacity: .82 }));
+    svg.append(svgElement(svg, 'circle', { cx: x(points.length - 1), cy: y(points.at(-1).close), r: 4.2, fill: options.color, stroke: '#fff', 'stroke-width': 2 }));
 
     const focus = svgElement(svg, 'g', { display: 'none', 'pointer-events': 'none' });
     const vertical = svgElement(svg, 'line', { y1: margin.top, y2: height - margin.bottom, stroke: options.color, 'stroke-width': 1, 'stroke-dasharray': '4 4', opacity: .6 });
     const marker = svgElement(svg, 'circle', { r: 4.5, fill: '#fff', stroke: options.color, 'stroke-width': 2.2 });
     const tooltip = svgElement(svg, 'g');
-    const tooltipBox = svgElement(svg, 'rect', { width: 154, height: 39, rx: 3, fill: '#173d49', opacity: .96 });
+    const tooltipBox = svgElement(svg, 'rect', { width: 168, height: 43, rx: 6, fill: '#173d49', opacity: .97 });
     const tooltipDate = svgElement(svg, 'text', { x: 9, y: 15, fill: '#bcd4ce', 'font-size': 9 });
     const tooltipValue = svgElement(svg, 'text', { x: 9, y: 30, fill: '#fff', 'font-size': 12, 'font-weight': 700 });
     tooltip.append(tooltipBox, tooltipDate, tooltipValue);
@@ -138,8 +192,8 @@
       const row = points[index], xx = x(index), yy = y(row.close);
       vertical.setAttribute('x1', xx); vertical.setAttribute('x2', xx);
       marker.setAttribute('cx', xx); marker.setAttribute('cy', yy);
-      const tooltipX = xx + 10 + 154 > width - margin.right ? xx - 164 : xx + 10;
-      const tooltipY = Math.max(margin.top + 3, Math.min(yy - 47, height - margin.bottom - 42));
+      const tooltipX = xx + 10 + 168 > width - margin.right ? xx - 178 : xx + 10;
+      const tooltipY = Math.max(margin.top + 3, Math.min(yy - 51, height - margin.bottom - 46));
       tooltip.setAttribute('transform', `translate(${tooltipX} ${tooltipY})`);
       tooltipDate.textContent = row.date;
       tooltipValue.textContent = `${options.value(row.close)} · ${t('日收盘', 'daily close')}`;
@@ -271,17 +325,19 @@
   }
 
   async function refreshQuotes() {
-    await Promise.all(stocks.map(async (stock) => {
-      const url = new URL('https://push2.eastmoney.com/api/qt/stock/get');
-      url.searchParams.set('secid', stock.secid);
-      url.searchParams.set('fields', 'f43,f57,f58,f60,f86');
-      try {
-        const data = (await getJson(url)).data;
-        if (!data || !Number.isFinite(Number(data.f43)) || !Number.isFinite(Number(data.f60)) || !Number.isFinite(Number(data.f86))) throw new Error('Invalid quote');
-        quotes.set(stock.code, { price: Number(data.f43) / 100, previous: Number(data.f60) / 100, time: Number(data.f86) * 1000 });
-      } catch (error) { quotes.delete(stock.code); console.warn(`Quote unavailable for ${stock.code}:`, error); }
-    }));
+    await Promise.all(stocks.map(fetchQuote));
     renderCards(); renderSelected();
+  }
+
+  async function fetchQuote(stock) {
+    const url = new URL('https://push2.eastmoney.com/api/qt/stock/get');
+    url.searchParams.set('secid', stock.secid);
+    url.searchParams.set('fields', 'f43,f57,f58,f60,f86');
+    try {
+      const data = (await getJson(url)).data;
+      if (!data || !Number.isFinite(Number(data.f43)) || !Number.isFinite(Number(data.f60)) || !Number.isFinite(Number(data.f86))) throw new Error('Invalid quote');
+      quotes.set(stock.code, { price: Number(data.f43) / 100, previous: Number(data.f60) / 100, time: Number(data.f86) * 1000 });
+    } catch (error) { quotes.delete(stock.code); console.warn(`Quote unavailable for ${stock.code}:`, error); }
   }
 
   async function refreshGold() {
@@ -340,10 +396,20 @@
     holdings[selected.code] = { shares, cost };
     renderHolding();
   });
-  document.getElementById('language-switch').addEventListener('click', () => { renderCards(); renderSelected(); refreshGold(); renderGoldTrend(); });
+  document.getElementById('stock-search-form').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const query = document.getElementById('stock-search-input').value.trim();
+    if (query) searchStocks(query);
+  });
+  document.getElementById('stock-search-input').addEventListener('input', (event) => {
+    if (!event.target.value.trim()) document.getElementById('stock-search-results').replaceChildren();
+  });
+  document.getElementById('language-switch').addEventListener('click', () => {
+    document.getElementById('stock-search-input').placeholder = t('输入名称或代码，例如：浙能 / 600023', 'Enter a name or code, e.g. 600023');
+    renderCards(); renderSelected(); refreshGold(); renderGoldTrend();
+  });
   selectStock(selected);
   refreshQuotes(); refreshGold(); renderGoldTrend();
   setInterval(refreshQuotes, 60000);
   setInterval(refreshGold, 30000);
 })();
-

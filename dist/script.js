@@ -4,6 +4,7 @@
   const journals = window.BAOXUAN_JOURNALS || {};
   const quartiles = window.BAOXUAN_QUARTILES || {};
   const scholar = window.BAOXUAN_SCHOLAR || {};
+  const cnki = window.BAOXUAN_CNKI_CITATIONS || { works: {} };
   const dailySnapshot = window.BAOXUAN_ACADEMIC_SNAPSHOT || null;
   const xinruiSource = 'https://kjc.cdmc.edu.cn/module/download/downfile.jsp?classid=0&filename=77490d1d77c14c02936e1737479be025.xlsx';
   let language = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'zh';
@@ -78,6 +79,104 @@
     return [...unique.values()].sort((a, b) => Number(b.year) - Number(a.year) || a.title.localeCompare(b.title));
   }
 
+  function renderPortfolio() {
+    const articles = works.filter((work) => work.type === 'journal-article' && work.journal);
+    const groups = new Map();
+    for (const work of articles) groups.set(work.journal, (groups.get(work.journal) || 0) + 1);
+    const sci = articles.filter((work) => journals[work.journal]?.wos === 'SCIE').length;
+    const firstAuthor = articles.filter((work) => dailySnapshot?.works?.[doiKey(work.doi)]?.firstAuthor).length;
+    const totals = document.getElementById('portfolio-totals');
+    const items = [
+      [t('期刊论文', 'Journal articles'), articles.length],
+      [t('发表期刊', 'Journals'), groups.size],
+      [t('SCIE 期刊论文', 'SCIE journal articles'), sci],
+      [t('第一作者', 'First author'), firstAuthor]
+    ];
+    totals.replaceChildren(...items.map(([label, value]) => {
+      const item = el('span', 'portfolio-total');
+      item.append(el('strong', '', number(value)), el('small', '', label));
+      return item;
+    }));
+    const grid = document.getElementById('journal-portfolio-grid');
+    const fragment = document.createDocumentFragment();
+    for (const [name, count] of [...groups].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))) {
+      const journal = journals[name];
+      const card = el(journal?.homepage ? 'a' : 'div', 'portfolio-journal');
+      if (journal?.homepage) { card.href = journal.homepage; card.target = '_blank'; card.rel = 'noopener noreferrer'; }
+      const cover = journalCover(name, true);
+      const text = el('span', 'portfolio-journal-copy');
+      text.append(el('strong', '', name), el('small', '', t(`${count} 篇论文`, `${count} article${count === 1 ? '' : 's'}`)));
+      card.append(...(cover ? [cover.firstChild, text] : [text]));
+      fragment.append(card);
+    }
+    grid.replaceChildren(fragment);
+    document.getElementById('portfolio-author-note').textContent = t(
+      '第一作者根据 OpenAlex 作者顺序自动统计；通讯作者与中文论文需由检索记录核验，暂不推断。',
+      'First authorship is calculated from OpenAlex author order. Corresponding authorship and Chinese-language papers require verified records and are not inferred.'
+    );
+  }
+
+  function citationSummary(work) {
+    const doi = doiKey(work.doi);
+    const google = scholar.works?.[doi];
+    const openalex = dailySnapshot?.works?.[doi];
+    const chinese = cnki.works?.[doi];
+    return { doi, google, openalex, chinese };
+  }
+
+  async function showCitationDetails(root, work, summary) {
+    root.hidden = false;
+    root.replaceChildren(el('p', 'citation-loading', t('正在获取施引文献…', 'Loading citing documents…')));
+    const fragment = document.createDocumentFragment();
+    const header = el('div', 'citation-detail-head');
+    header.append(el('strong', '', t('施引文献详情', 'Citing documents')));
+    if (summary.google?.citedByUrl) {
+      const link = el('a', '', 'Google Scholar ↗');
+      link.href = summary.google.citedByUrl; link.target = '_blank'; link.rel = 'noopener noreferrer'; header.append(link);
+    }
+    fragment.append(header);
+    const openalexSection = el('section', 'citation-source');
+    openalexSection.append(el('h4', '', 'OpenAlex'));
+    if (summary.openalex?.id) {
+      try {
+        const url = new URL('https://api.openalex.org/works');
+        url.searchParams.set('filter', `cites:${summary.openalex.id}`);
+        url.searchParams.set('per_page', '100');
+        url.searchParams.set('select', 'display_name,publication_year,authorships,doi,primary_location');
+        const data = await getJson(url);
+        const list = el('ol', 'citation-list');
+        for (const item of data.results || []) {
+          const entry = el('li');
+          const title = item.display_name || t('未命名文献', 'Untitled work');
+          const href = item.doi || item.primary_location?.landing_page_url;
+          const titleNode = href ? el('a', '', title) : el('span', '', title);
+          if (href) { titleNode.href = href; titleNode.target = '_blank'; titleNode.rel = 'noopener noreferrer'; }
+          const authors = (item.authorships || []).slice(0, 4).map((author) => author.author?.display_name).filter(Boolean).join(', ');
+          entry.append(titleNode, el('small', '', `${authors}${authors && item.publication_year ? ' · ' : ''}${item.publication_year || ''}`));
+          list.append(entry);
+        }
+        openalexSection.append(list.childNodes.length ? list : el('p', '', t('暂无施引记录。', 'No citing records.')));
+        if (Number(data.meta?.count) > 100) openalexSection.append(el('p', 'citation-more', t(`显示前 100 / ${number(data.meta.count)} 条`, `Showing 100 of ${number(data.meta.count)}`)));
+      } catch (error) { openalexSection.append(el('p', '', t('OpenAlex 详情暂不可用。', 'OpenAlex details are temporarily unavailable.'))); }
+    } else openalexSection.append(el('p', '', t('暂无 OpenAlex 匹配记录。', 'No OpenAlex match.')));
+    fragment.append(openalexSection);
+    const cnkiSection = el('section', 'citation-source');
+    cnkiSection.append(el('h4', '', t('中国知网中文施引', 'CNKI Chinese citations')));
+    const records = summary.chinese?.citations || [];
+    if (records.length) {
+      const list = el('ol', 'citation-list');
+      for (const record of records) {
+        const item = el('li');
+        const titleNode = record.url ? el('a', '', record.title) : el('span', '', record.title);
+        if (record.url) { titleNode.href = record.url; titleNode.target = '_blank'; titleNode.rel = 'noopener noreferrer'; }
+        item.append(titleNode, el('small', '', [record.authors, record.year].filter(Boolean).join(' · '))); list.append(item);
+      }
+      cnkiSection.append(list);
+    } else cnkiSection.append(el('p', '', t('等待导入知网“引证文献”检索记录。', 'Awaiting an exported CNKI citing-document record.')));
+    fragment.append(cnkiSection);
+    root.replaceChildren(fragment);
+  }
+
   function renderWorks() {
     const query = document.getElementById('works-search').value.trim().toLowerCase();
     const visible = works.filter((work) => (filter === 'all' || work.type === filter) && (!query || `${work.title} ${work.journal} ${work.doi} ${work.year}`.toLowerCase().includes(query)));
@@ -114,10 +213,31 @@
         badge.href = xinruiSource; badge.target = '_blank'; badge.rel = 'noopener noreferrer'; facts.append(badge);
       }
       appendQuartiles(facts, work.journal);
+      if (journal?.letpub) {
+        const letpub = el('a', 'fact-badge', t('LetPub 实时指标 ↗', 'LetPub live metrics ↗'));
+        letpub.href = journal.letpub; letpub.target = '_blank'; letpub.rel = 'noopener noreferrer'; facts.append(letpub);
+      }
       if (journal?.wos) facts.append(el('span', 'fact-badge fact-coverage', t(`期刊 ${journal.wos}`, `Journal ${journal.wos}`)));
       if (journal?.ei) facts.append(el('span', 'fact-badge fact-coverage', t('期刊 EI', 'Journal EI')));
       if (work.type !== 'preprint') facts.append(el('span', 'fact-badge fact-pending', t('单篇 SCI/EI 待核验', 'Article SCI/EI unverified')));
+      const citations = citationSummary(work);
+      if (citations.google && Number.isFinite(Number(citations.google.total))) facts.append(el('span', 'fact-badge fact-citation', `Google Scholar ${t('总引用', 'total')} ${number(citations.google.total)}`));
+      else if (citations.openalex) facts.append(el('span', 'fact-badge fact-citation', `OpenAlex ${t('总引用', 'total')} ${number(citations.openalex.total)} · ${t('备用', 'fallback')}`));
+      if (citations.openalex) facts.append(el('span', 'fact-badge fact-citation', `OpenAlex ${t('他引', 'external')} ${number(citations.openalex.external)}`));
+      if (citations.chinese && Number.isFinite(Number(citations.chinese.total))) facts.append(el('span', 'fact-badge fact-cnki', `CNKI ${t('中文施引', 'Chinese citing')} ${number(citations.chinese.total)}`));
+      else facts.append(el('span', 'fact-badge fact-pending', `CNKI ${t('待导入', 'pending')}`));
       if (facts.childNodes.length) body.append(facts);
+      if (citations.openalex || citations.google || citations.chinese) {
+        const detailButton = el('button', 'citation-detail-button', t('查看施引文献详情', 'View citing documents'));
+        detailButton.type = 'button'; detailButton.setAttribute('aria-expanded', 'false');
+        const detail = el('div', 'citation-detail'); detail.hidden = true;
+        detailButton.addEventListener('click', () => {
+          const opening = detail.hidden;
+          detail.hidden = !opening; detailButton.setAttribute('aria-expanded', String(opening));
+          if (opening && !detail.dataset.loaded) { detail.dataset.loaded = 'true'; showCitationDetails(detail, work, citations); }
+        });
+        body.append(detailButton, detail);
+      }
       if (cover) {
         const visual = el('div', 'publication-journal-visual');
         visual.append(cover); body.append(visual);
@@ -128,6 +248,7 @@
     list.replaceChildren(fragment);
     document.getElementById('works-count').textContent = number(works.length);
     document.getElementById('works-visible-count').textContent = t(`显示 ${visible.length} / ${works.length} 项成果`, `Showing ${visible.length} of ${works.length} works`);
+    renderPortfolio();
   }
 
   function renderReviewerMetrics() {
@@ -149,6 +270,10 @@
         link.href = xinruiSource; link.target = '_blank'; link.rel = 'noopener noreferrer'; meta.append(link);
       }
       appendQuartiles(meta, name, true);
+      if (journal?.letpub) {
+        const link = el('a', '', t('LetPub 实时指标', 'LetPub live metrics'));
+        link.href = journal.letpub; link.target = '_blank'; link.rel = 'noopener noreferrer'; meta.append(link);
+      }
       if (!meta.childNodes.length) meta.append(el('span', '', t('暂无公开 JIF / 分区', 'No published JIF / ranking')));
       body.append(meta);
       const cover = journalCover(name, true);
@@ -254,4 +379,3 @@
   document.getElementById('year').textContent = String(new Date().getFullYear());
   render(); loadOrcid().then(loadCitations);
 })();
-
