@@ -115,9 +115,7 @@
       if (facts.childNodes.length) body.append(facts);
       if (cover) {
         const visual = el('div', 'publication-journal-visual');
-        const label = el('a', 'publication-cover-link', t('查看 PPT 所用真实期刊封面及官网 ↗', 'View the real journal cover from the PPT and open its site ↗'));
-        label.href = journal.homepage; label.target = '_blank'; label.rel = 'noopener noreferrer';
-        visual.append(cover, label); body.append(visual);
+        visual.append(cover); body.append(visual);
       }
       article.append(body); fragment.append(article);
     }
@@ -249,3 +247,4 @@
   document.getElementById('year').textContent = String(new Date().getFullYear());
   render(); loadOrcid().then(loadCitations);
 })();
+
