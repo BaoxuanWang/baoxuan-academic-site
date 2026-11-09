@@ -34,18 +34,17 @@
 
   function journalCover(name, compact = false) {
     const journal = journals[name];
-    if (!journal?.homepage) return null;
+    if (!journal?.homepage || !journal?.cover) return null;
     const cover = el('a', `journal-cover${compact ? ' journal-cover-compact' : ''}`);
     cover.href = journal.homepage;
     cover.target = '_blank';
     cover.rel = 'noopener noreferrer';
     cover.setAttribute('aria-label', t(`打开 ${name} 期刊官网`, `Open the ${name} journal website`));
-    cover.style.setProperty('--cover-seed', String([...name].reduce((sum, char) => sum + char.charCodeAt(0), 0) % 5));
-    cover.append(
-      el('span', 'journal-cover-masthead', journal.publisher || t('期刊', 'Journal')),
-      el('span', 'journal-cover-title', name),
-      el('span', 'journal-cover-foot', t('期刊官网 ↗', 'Journal site ↗'))
-    );
+    const image = el('img');
+    image.src = journal.cover;
+    image.alt = t(`${name} 真实期刊封面`, `Real cover of ${name}`);
+    image.loading = 'eager'; image.decoding = 'sync';
+    cover.append(image);
     return cover;
   }
 
@@ -85,8 +84,6 @@
       article.append(el('span', 'publication-year', work.year || '—'));
       const journal = journals[work.journal];
       const cover = journalCover(work.journal);
-      if (cover) article.append(cover);
-      else article.classList.add('publication-no-cover');
       const body = el('div', 'publication-body');
       const heading = el('h3');
       const link = el('a', '', work.title);
@@ -116,6 +113,12 @@
       if (journal?.ei) facts.append(el('span', 'fact-badge fact-coverage', t('期刊 EI', 'Journal EI')));
       if (work.type !== 'preprint') facts.append(el('span', 'fact-badge fact-pending', t('单篇 SCI/EI 待核验', 'Article SCI/EI unverified')));
       if (facts.childNodes.length) body.append(facts);
+      if (cover) {
+        const visual = el('div', 'publication-journal-visual');
+        const label = el('a', 'publication-cover-link', t('查看 PPT 所用真实期刊封面及官网 ↗', 'View the real journal cover from the PPT and open its site ↗'));
+        label.href = journal.homepage; label.target = '_blank'; label.rel = 'noopener noreferrer';
+        visual.append(cover, label); body.append(visual);
+      }
       article.append(body); fragment.append(article);
     }
     if (!visible.length) fragment.append(el('p', 'publication-empty', t('没有匹配的成果。', 'No matching works.')));
@@ -146,6 +149,7 @@
       if (!meta.childNodes.length) meta.append(el('span', '', t('暂无公开 JIF / 分区', 'No published JIF / ranking')));
       body.append(meta);
       const cover = journalCover(name, true);
+      item.classList.toggle('reviewer-no-cover', !cover);
       item.replaceChildren(...(cover ? [cover, body] : [body]));
     });
   }

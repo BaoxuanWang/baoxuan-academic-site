@@ -26,3 +26,36 @@ window.BAOXUAN_JOURNALS = {
   "Transportation Geotechnics": { impactFactor: 6.2, xinrui: "2", wos: "SCIE", ei: false, source: "https://www.sci365.cn/journals/transportation-geotechnics-22143912/", homepage: "https://www.sciencedirect.com/journal/transportation-geotechnics", publisher: "Elsevier" },
   "Wind Energy and Engineering Research": { impactFactor: null, xinrui: null, wos: null, ei: false, source: null, homepage: "https://www.sciencedirect.com/journal/wind-energy-and-engineering-research", publisher: "Elsevier" }
 };
+
+Object.assign(window.BAOXUAN_JOURNALS, {
+  "Materials & Design": { impactFactor: 8.2, xinrui: null, wos: "SCIE", ei: false, source: "https://www.sciencedirect.com/journal/materials-and-design", homepage: "https://www.sciencedirect.com/journal/materials-and-design", publisher: "Elsevier" },
+  "Marine Structures": { impactFactor: 5.6, xinrui: null, wos: "SCIE", ei: false, source: "https://www.sciencedirect.com/journal/marine-structures", homepage: "https://www.sciencedirect.com/journal/marine-structures", publisher: "Elsevier" }
+});
+
+const BAOXUAN_JOURNAL_COVERS = {
+  "Aerospace Science and Technology": "aerospace-science-technology.jpeg",
+  "Applied Ocean Research": "applied-ocean-research.jpeg",
+  "Cold Regions Science and Technology": "cold-regions-science-technology.jpeg",
+  "Composite Structures": "composite-structures.jpg",
+  "Energy": "energy.jpeg",
+  "Energy Conversion and Management: X": "energy-conversion-management-x.jpeg",
+  "Journal of Offshore Mechanics and Arctic Engineering": "journal-offshore-mechanics-arctic.jpeg",
+  "Journal of Wind Engineering and Industrial Aerodynamics": "journal-wind-engineering-industrial-aerodynamics.jpeg",
+  "Marine Energy Research": "marine-energy-research.jpg",
+  "Marine Structures": "marine-structures.jpeg",
+  "Materials & Design": "materials-design.jpeg",
+  "Measurement": "measurement.jpeg",
+  "Next Mechanical Engineering": "next-mechanical-engineering.jpeg",
+  "Ocean Engineering": "ocean-engineering.jpeg",
+  "Renewable and Sustainable Energy Reviews": "renewable-sustainable-energy-reviews.jpeg",
+  "SoftwareX": "softwarex.jpeg",
+  "Soil Dynamics and Earthquake Engineering": "soil-dynamics-earthquake-engineering.jpeg",
+  "Structures": "structures.jpeg",
+  "Sustainable Energy Technologies and Assessments": "sustainable-energy-technologies-assessments.jpeg",
+  "Thin-Walled Structures": "thin-walled-structures.jpeg",
+  "Wind Energy and Engineering Research": "wind-energy-engineering-research.jpeg"
+};
+
+for (const [name, file] of Object.entries(BAOXUAN_JOURNAL_COVERS)) {
+  if (window.BAOXUAN_JOURNALS[name]) window.BAOXUAN_JOURNALS[name].cover = `./assets/journals/${file}`;
+}
