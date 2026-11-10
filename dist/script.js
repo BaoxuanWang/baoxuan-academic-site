@@ -5,6 +5,7 @@
   const quartiles = window.BAOXUAN_QUARTILES || {};
   const scholar = window.BAOXUAN_SCHOLAR || {};
   const cnki = window.BAOXUAN_CNKI_CITATIONS || { works: {} };
+  const service = window.BAOXUAN_SERVICE || { editorial: [], reviewers: [] };
   const dailySnapshot = window.BAOXUAN_ACADEMIC_SNAPSHOT || null;
   const xinruiSource = 'https://kjc.cdmc.edu.cn/module/download/downfile.jsp?classid=0&filename=77490d1d77c14c02936e1737479be025.xlsx';
   let language = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'zh';
@@ -84,7 +85,7 @@
     const groups = new Map();
     for (const work of articles) groups.set(work.journal, (groups.get(work.journal) || 0) + 1);
     const sci = articles.filter((work) => journals[work.journal]?.wos === 'SCIE').length;
-    const firstAuthor = articles.filter((work) => dailySnapshot?.works?.[doiKey(work.doi)]?.firstAuthor).length;
+    const firstAuthor = articles.filter((work) => work.firstAuthor ?? dailySnapshot?.works?.[doiKey(work.doi)]?.firstAuthor).length;
     const totals = document.getElementById('portfolio-totals');
     const items = [
       [t('期刊论文', 'Journal articles'), articles.length],
@@ -111,8 +112,8 @@
     }
     grid.replaceChildren(fragment);
     document.getElementById('portfolio-author-note').textContent = t(
-      '第一作者根据 OpenAlex 作者顺序自动统计；通讯作者与中文论文需由检索记录核验，暂不推断。',
-      'First authorship is calculated from OpenAlex author order. Corresponding authorship and Chinese-language papers require verified records and are not inferred.'
+      '第一作者按 ORCID 与完整作者顺序统计，并以规范姓名匹配补足缺失的 ORCID 关联；通讯作者需由论文原文核验。',
+      'First authorship uses ORCID and full author order, with normalized-name matching when an ORCID link is missing. Corresponding authorship requires verification from the paper.'
     );
   }
 
@@ -202,7 +203,18 @@
         publicationMeta.append(journalLink);
       } else publicationMeta.append(document.createTextNode(work.journal || t('预印本', 'Preprint')));
       publicationMeta.append(document.createTextNode(` · DOI: ${work.doi}`));
-      body.append(heading, publicationMeta);
+      body.append(heading);
+      const authors = work.authors?.length ? work.authors : dailySnapshot?.works?.[doiKey(work.doi)]?.authors || [];
+      if (authors.length) {
+        const authorLine = el('p', 'publication-authors');
+        authors.forEach((author, index) => {
+          if (index) authorLine.append(document.createTextNode(', '));
+          const authorNode = el('span', /^(baoxuan\s+wang|wang,?\s+baoxuan)$/i.test(author.trim()) ? 'is-profile-author' : '', author);
+          authorLine.append(authorNode);
+        });
+        body.append(authorLine);
+      }
+      body.append(publicationMeta);
       const facts = el('div', 'publication-facts');
       if (journal?.impactFactor != null) {
         const badge = el('a', 'fact-badge', `IF ${journal.impactFactor} · 2025`);
@@ -282,6 +294,13 @@
     });
   }
 
+  function renderService() {
+    const editorial = document.getElementById('editorial-list');
+    const reviewer = document.getElementById('reviewer-list');
+    editorial.replaceChildren(...service.editorial.map((name) => el('li', '', name)));
+    reviewer.replaceChildren(...service.reviewers.map((name) => el('li', '', name)));
+  }
+
   function renderStatus() {
     const dot = document.getElementById('data-status-dot');
     dot.classList.toggle('is-live', citationState === 'live' || citationState === 'daily');
@@ -305,7 +324,7 @@
     document.getElementById('citations-total').textContent = document.getElementById('citations-total').dataset.value ? number(document.getElementById('citations-total').dataset.value) : '—';
     document.getElementById('citations-external').textContent = document.getElementById('citations-external').dataset.value ? number(document.getElementById('citations-external').dataset.value) : '—';
     renderScholar();
-    renderWorks(); renderReviewerMetrics(); renderStatus();
+    renderWorks(); renderService(); renderReviewerMetrics(); renderStatus();
   }
 
   async function getJson(url) {
@@ -322,7 +341,9 @@
     try {
       const liveWorks = fromOrcid(await getJson('https://pub.orcid.org/v3.0/0000-0001-8802-6800/works'));
       if (!liveWorks.length) throw new Error('Empty ORCID list');
-      works = liveWorks; orcidLive = true; renderWorks(); renderStatus();
+      const cached = new Map(works.map((work) => [doiKey(work.doi), work]));
+      works = liveWorks.map((work) => ({ ...cached.get(doiKey(work.doi)), ...work }));
+      orcidLive = true; renderWorks(); renderStatus();
     } catch (error) { console.warn('ORCID refresh unavailable:', error); }
   }
 
@@ -333,7 +354,7 @@
       const indexedUrl = new URL('https://api.openalex.org/works');
       indexedUrl.searchParams.set('filter', `doi:${dois.join('|')}`);
       indexedUrl.searchParams.set('per_page', '200');
-      indexedUrl.searchParams.set('select', 'id,doi,cited_by_count');
+      indexedUrl.searchParams.set('select', 'id,doi,cited_by_count,authorships');
       const indexed = await getJson(indexedUrl);
       const doiSet = new Set(dois);
       const matched = (indexed.results || []).filter((work) => doiSet.has(doiKey(work.doi)));
@@ -358,6 +379,19 @@
       } while ((page - 1) * 200 < count && page <= 10);
       document.getElementById('citations-total').dataset.value = String(total);
       document.getElementById('citations-external').dataset.value = String(Math.max(0, total - self));
+      const byDoi = new Map(matched.map((item) => [doiKey(item.doi), item]));
+      works = works.map((work) => {
+        const item = byDoi.get(doiKey(work.doi));
+        if (!item) return work;
+        const authorships = item.authorships || [];
+        const first = authorships.find((entry) => entry.author_position === 'first') || authorships[0];
+        const firstName = String(first?.author?.display_name || '').toLowerCase().replace(/[^a-z]/g, '');
+        return {
+          ...work,
+          authors: authorships.map((entry) => entry.author?.display_name).filter(Boolean),
+          firstAuthor: first?.author?.orcid === orcid || firstName === 'baoxuanwang' || firstName === 'wangbaoxuan'
+        };
+      });
       coverage = `${matched.length}/${dois.length}`;
       updatedAt = new Date(); citationState = 'live';
     } catch (error) { citationState = dailySnapshot ? 'daily' : 'error'; console.warn('OpenAlex refresh unavailable:', error); }

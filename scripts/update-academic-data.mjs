@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 const orcidId = '0000-0001-8802-6800';
 const orcidUrl = `https://orcid.org/${orcidId}`;
 const target = resolve('dist/works.js');
+const targetNames = new Set(['baoxuanwang', 'wangbaoxuan']);
 
 async function getJson(url, headers = {}) {
   const response = await fetch(url, { headers: { Accept: 'application/json', ...headers } });
@@ -13,6 +14,25 @@ async function getJson(url, headers = {}) {
 
 function doiKey(value = '') {
   return String(value).trim().toLowerCase().replace(/^https?:\/\/(dx\.)?doi\.org\//, '').replace(/^doi:\s*/, '');
+}
+
+function normalizeName(value = '') {
+  return String(value).normalize('NFKD').toLowerCase().replace(/[^a-z]/g, '');
+}
+
+function isTargetAuthor(entry = {}) {
+  return entry.author?.orcid === orcidUrl || targetNames.has(normalizeName(entry.author?.display_name));
+}
+
+async function crossrefAuthors(doi) {
+  try {
+    const data = await getJson(`https://api.crossref.org/works/${encodeURIComponent(doi)}`);
+    const authors = (data.message?.author || []).map((author) => [author.given, author.family].filter(Boolean).join(' ').trim()).filter(Boolean);
+    return { authors, firstAuthor: targetNames.has(normalizeName(authors[0])) };
+  } catch (error) {
+    console.warn(`Crossref author fallback failed for ${doi}: ${error.message}`);
+    return { authors: [], firstAuthor: false };
+  }
 }
 
 function fromOrcid(data) {
@@ -75,13 +95,21 @@ async function citationSnapshot(works) {
     const doi = doiKey(work.doi);
     const total = Number(work.cited_by_count) || 0;
     const self = selfByTarget.get(work.id) || 0;
-    const first = (work.authorships || []).find((entry) => entry.author_position === 'first');
+    const authorships = work.authorships || [];
+    const first = authorships.find((entry) => entry.author_position === 'first') || authorships[0];
     workCitations[doi] = {
       id: work.id.split('/').pop(),
       total,
       external: Math.max(0, total - self),
-      firstAuthor: first?.author?.orcid === orcidUrl
+      firstAuthor: isTargetAuthor(first),
+      authors: authorships.map((entry) => entry.author?.display_name).filter(Boolean)
     };
+  }
+  for (const work of works) {
+    const doi = doiKey(work.doi);
+    if (workCitations[doi]?.authors?.length) continue;
+    const fallback = await crossrefAuthors(doi);
+    workCitations[doi] = { ...(workCitations[doi] || {}), ...fallback };
   }
   return { citations, externalCitations: Math.max(0, citations - selfCitations), coverage: `${matched.length}/${dois.length}`, works: workCitations };
 }
@@ -90,6 +118,11 @@ const orcidData = await getJson(`https://pub.orcid.org/v3.0/${orcidId}/works`, {
 const works = fromOrcid(orcidData);
 if (!works.length) throw new Error('ORCID returned no DOI works');
 const citations = await citationSnapshot(works);
+for (const work of works) {
+  const metadata = citations.works[doiKey(work.doi)];
+  work.authors = metadata?.authors || [];
+  work.firstAuthor = Boolean(metadata?.firstAuthor);
+}
 const snapshot = { generatedAt: new Date().toISOString(), source: 'ORCID + OpenAlex', ...citations };
 const output = `window.BAOXUAN_WORKS=${JSON.stringify(works)};\nwindow.BAOXUAN_ACADEMIC_SNAPSHOT=${JSON.stringify(snapshot)};\n`;
 await writeFile(target, output, 'utf8');
