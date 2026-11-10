@@ -16,8 +16,8 @@
   const quotes = new Map();
   const histories = new Map();
   let selected = stocks[0];
-  let range = 'short';
-  let goldRange = 'short';
+  let range = 'month';
+  let goldRange = 'month';
   const holdings = {};
   const en = () => document.documentElement.lang === 'en';
   const t = (zh, english) => en() ? english : zh;
@@ -127,8 +127,9 @@
   }
 
   function renderInteractiveChart(root, points, options) {
-    const width = 760, height = 320;
-    const margin = { left: 72, right: 24, top: 24, bottom: 50 };
+    const pointSpacing = points.length <= 35 ? 24 : points.length <= 90 ? 13 : points.length <= 280 ? 7 : 4.5;
+    const width = Math.max(760, Math.round(144 + (points.length - 1) * pointSpacing)), height = 320;
+    const margin = { left: 72, right: 72, top: 24, bottom: 50 };
     const plotWidth = width - margin.left - margin.right;
     const plotHeight = height - margin.top - margin.bottom;
     const values = points.map((row) => row.close);
@@ -140,6 +141,10 @@
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
     svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    svg.setAttribute('width', String(width));
+    svg.setAttribute('height', String(height));
+    svg.style.width = `${width}px`;
+    svg.style.maxWidth = 'none';
     svg.setAttribute('aria-hidden', 'true');
 
     for (let index = 0; index < 5; index += 1) {
@@ -147,7 +152,8 @@
       const price = maximum - index / 4 * (maximum - minimum);
       svg.append(
         svgElement(svg, 'line', { x1: margin.left, x2: width - margin.right, y1: yy, y2: yy, stroke: options.grid, 'stroke-width': 1 }),
-        svgElement(svg, 'text', { x: margin.left - 10, y: yy + 4, fill: options.muted, 'font-size': 10, 'text-anchor': 'end' }, options.tick(price))
+        svgElement(svg, 'text', { x: margin.left - 10, y: yy + 4, fill: options.muted, 'font-size': 10, 'text-anchor': 'end' }, options.tick(price)),
+        svgElement(svg, 'text', { x: width - margin.right + 10, y: yy + 4, fill: options.muted, 'font-size': 10, 'text-anchor': 'start' }, options.tick(price))
       );
     }
 
@@ -164,6 +170,7 @@
     }
     svg.append(
       svgElement(svg, 'line', { x1: margin.left, x2: margin.left, y1: margin.top, y2: height - margin.bottom, stroke: options.axis, 'stroke-width': 1 }),
+      svgElement(svg, 'line', { x1: width - margin.right, x2: width - margin.right, y1: margin.top, y2: height - margin.bottom, stroke: options.axis, 'stroke-width': 1 }),
       svgElement(svg, 'line', { x1: margin.left, x2: width - margin.right, y1: height - margin.bottom, y2: height - margin.bottom, stroke: options.axis, 'stroke-width': 1 }),
       svgElement(svg, 'text', { x: 14, y: margin.top + plotHeight / 2, fill: options.muted, 'font-size': 10, 'text-anchor': 'middle', transform: `rotate(-90 14 ${margin.top + plotHeight / 2})` }, options.yLabel),
       svgElement(svg, 'text', { x: margin.left + plotWidth / 2, y: height - 4, fill: options.muted, 'font-size': 10, 'text-anchor': 'middle' }, t('日期', 'Date'))
@@ -206,21 +213,46 @@
       const coordinate = (event.clientX - bounds.left) / bounds.width * width;
       return Math.max(0, Math.min(points.length - 1, Math.round((coordinate - margin.left) / plotWidth * (points.length - 1))));
     }
-    svg.addEventListener('pointermove', (event) => { if (event.pointerType === 'mouse') showPoint(pointFromEvent(event)); });
-    svg.addEventListener('click', (event) => showPoint(pointFromEvent(event)));
+    let dragStart = null;
+    let suppressClick = false;
+    root.onpointerdown = (event) => {
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      dragStart = { x: event.clientX, scroll: root.scrollLeft };
+      suppressClick = false;
+      root.classList.add('is-dragging');
+      root.setPointerCapture?.(event.pointerId);
+    };
+    root.onpointermove = (event) => {
+      if (dragStart) {
+        const movement = event.clientX - dragStart.x;
+        if (Math.abs(movement) > 3) suppressClick = true;
+        root.scrollLeft = dragStart.scroll - movement;
+      } else if (event.pointerType === 'mouse') showPoint(pointFromEvent(event));
+    };
+    const endDrag = (event) => {
+      dragStart = null;
+      root.classList.remove('is-dragging');
+      root.releasePointerCapture?.(event.pointerId);
+    };
+    root.onpointerup = endDrag;
+    root.onpointercancel = endDrag;
+    svg.addEventListener('click', (event) => { if (!suppressClick) showPoint(pointFromEvent(event)); suppressClick = false; });
     root.replaceChildren(svg);
+    root.scrollLeft = root.scrollWidth;
     showPoint(points.length - 1);
   }
 
   function drawChart(rows) {
     const root = document.getElementById('price-chart');
     if (!rows?.length) { root.textContent = t('走势暂不可用', 'Trend unavailable'); return; }
-    const points = range === 'short' ? rows.slice(-22) : rows.slice(-250);
+    const counts = { month: 22, quarter: 66, year: 250, fiveyear: Infinity };
+    const count = counts[range] || 22;
+    const points = Number.isFinite(count) ? rows.slice(-count) : rows;
     if (points.length < 2) { root.textContent = t('数据不足', 'Insufficient data'); return; }
     renderInteractiveChart(root, points, {
       name: en() ? selected.en : selected.name,
       color: '#258b85', fill: 'rgba(62,153,136,.10)', grid: '#e4eee8', axis: '#a9beb7', muted: '#78938d',
-      longRange: range === 'long', yLabel: t('收盘价（元）', 'Close (CNY)'), tick: (value) => number(value), value: (value) => `¥${number(value)}`
+      longRange: points.length > 90, yLabel: t('收盘价（元）', 'Close (CNY)'), tick: (value) => number(value), value: (value) => `¥${number(value)}`
     });
   }
 
@@ -309,7 +341,7 @@
 
   async function loadHistory(stock) {
     if (histories.has(stock.code)) return;
-    const start = new Date(Date.now() - 400 * 86400000).toISOString().slice(0, 10).replaceAll('-', '');
+    const start = new Date(Date.now() - 1900 * 86400000).toISOString().slice(0, 10).replaceAll('-', '');
     const url = new URL('https://push2his.eastmoney.com/api/qt/stock/kline/get');
     for (const [key, value] of Object.entries({ secid: stock.secid, klt: '101', fqt: '1', beg: start, end: '20500101', ut: 'fa5fd1943c7b386f172d6893dbfba10b', fields1: 'f1,f2,f3,f4,f5,f6', fields2: 'f51,f52,f53,f54,f55,f56,f57,f58' })) url.searchParams.set(key, value);
     try {
@@ -360,11 +392,13 @@
     const history = window.BAOXUAN_GOLD_HISTORY || {};
     const rows = Array.isArray(history.series) ? history.series.filter((row) => Number.isFinite(Number(row.close))).map((row) => ({ date: row.date, close: Number(row.close) })).sort((a, b) => a.date.localeCompare(b.date)) : [];
     if (rows.length < 2) { root.textContent = t('金价历史暂不可用', 'Gold history unavailable'); summary.replaceChildren(); return; }
-    const points = goldRange === 'short' ? rows.slice(-22) : rows.slice(-260);
+    const counts = { month: 22, quarter: 66, year: 260, all: Infinity };
+    const count = counts[goldRange] || 22;
+    const points = Number.isFinite(count) ? rows.slice(-count) : rows;
     renderInteractiveChart(root, points, {
       name: t('国际现货黄金', 'Spot gold'),
       color: '#b8873b', fill: 'rgba(199,157,89,.13)', grid: '#e9e3d5', axis: '#c5b99f', muted: '#927f61',
-      longRange: goldRange === 'long', yLabel: t('收盘价（美元/盎司）', 'Close (USD/oz)'), tick: (value) => `$${number(value, 0)}`, value: (value) => `$${number(value)}`
+      longRange: points.length > 90, yLabel: t('收盘价（美元/盎司）', 'Close (USD/oz)'), tick: (value) => `$${number(value, 0)}`, value: (value) => `$${number(value)}`
     });
     const last = rows.at(-1).close;
     const month = rows.length > 22 ? (last / rows.at(-23).close - 1) * 100 : null;

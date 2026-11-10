@@ -28,8 +28,8 @@ window.BAOXUAN_JOURNALS = {
 };
 
 Object.assign(window.BAOXUAN_JOURNALS, {
-  "Materials & Design": { impactFactor: 8.2, xinrui: null, wos: "SCIE", ei: false, source: "https://www.sciencedirect.com/journal/materials-and-design", homepage: "https://www.sciencedirect.com/journal/materials-and-design", publisher: "Elsevier" },
-  "Marine Structures": { impactFactor: 5.6, xinrui: null, wos: "SCIE", ei: false, source: "https://www.sciencedirect.com/journal/marine-structures", homepage: "https://www.sciencedirect.com/journal/marine-structures", publisher: "Elsevier" }
+  "Materials & Design": { impactFactor: 8.2, xinrui: "2", wos: "SCIE", ei: false, source: "https://www.sci365.cn/journals/materials-design-02641275/", homepage: "https://www.sciencedirect.com/journal/materials-and-design", publisher: "Elsevier" },
+  "Marine Structures": { impactFactor: 5.6, xinrui: "2", wos: "SCIE", ei: false, source: "https://www.sci365.cn/journals/marine-structures-09518339/", homepage: "https://www.sciencedirect.com/journal/marine-structures", publisher: "Elsevier" }
 });
 
 const BAOXUAN_JOURNAL_COVERS = {

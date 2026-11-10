@@ -4,6 +4,7 @@
   const journals = window.BAOXUAN_JOURNALS || {};
   const quartiles = window.BAOXUAN_QUARTILES || {};
   const scholar = window.BAOXUAN_SCHOLAR || {};
+  const semantic = window.BAOXUAN_SEMANTIC_SCHOLAR || { works: {} };
   const cnki = window.BAOXUAN_CNKI_CITATIONS || { works: {} };
   const service = window.BAOXUAN_SERVICE || { editorial: [], reviewers: [] };
   const dailySnapshot = window.BAOXUAN_ACADEMIC_SNAPSHOT || null;
@@ -12,16 +13,17 @@
   let works = window.BAOXUAN_WORKS || [];
   let filter = 'all';
   let orcidLive = false;
-  let citationState = dailySnapshot ? 'daily' : 'loading';
-  let coverage = dailySnapshot?.coverage || '';
-  let updatedAt = dailySnapshot?.generatedAt ? new Date(dailySnapshot.generatedAt) : null;
+  const semanticAvailable = Number.isFinite(Number(semantic.citations)) && semantic.generatedAt;
+  let citationState = semanticAvailable ? 'semantic' : dailySnapshot ? 'daily' : 'loading';
+  let coverage = semanticAvailable ? semantic.coverage : dailySnapshot?.coverage || '';
+  let updatedAt = semanticAvailable ? new Date(semantic.generatedAt) : dailySnapshot?.generatedAt ? new Date(dailySnapshot.generatedAt) : null;
   const t = (zh, en) => language === 'zh' ? zh : en;
   const doiKey = (value) => String(value || '').replace(/^https?:\/\/(?:dx\.)?doi\.org\//i, '').trim().toLowerCase();
   const number = (value) => Number(value).toLocaleString(language === 'zh' ? 'zh-CN' : 'en-US');
   const el = (tag, cls, text) => { const node = document.createElement(tag); if (cls) node.className = cls; if (text != null) node.textContent = text; return node; };
-  if (dailySnapshot) {
-    document.getElementById('citations-total').dataset.value = String(dailySnapshot.citations);
-    document.getElementById('citations-external').dataset.value = String(dailySnapshot.externalCitations);
+  if (semanticAvailable || dailySnapshot) {
+    document.getElementById('citations-total').dataset.value = String(semanticAvailable ? semantic.citations : dailySnapshot.citations);
+    document.getElementById('citations-external').dataset.value = String(dailySnapshot?.externalCitations ?? '');
   }
 
   function appendQuartiles(root, name, compact = false) {
@@ -120,9 +122,10 @@
   function citationSummary(work) {
     const doi = doiKey(work.doi);
     const google = scholar.works?.[doi];
+    const semanticScholar = semantic.works?.[doi];
     const openalex = dailySnapshot?.works?.[doi];
     const chinese = cnki.works?.[doi];
-    return { doi, google, openalex, chinese };
+    return { doi, google, semanticScholar, openalex, chinese };
   }
 
   async function showCitationDetails(root, work, summary) {
@@ -136,6 +139,27 @@
       link.href = summary.google.citedByUrl; link.target = '_blank'; link.rel = 'noopener noreferrer'; header.append(link);
     }
     fragment.append(header);
+    const semanticSection = el('section', 'citation-source');
+    semanticSection.append(el('h4', '', 'Semantic Scholar'));
+    if (summary.semanticScholar?.paperId) {
+      try {
+        const url = new URL(`https://api.semanticscholar.org/graph/v1/paper/${summary.semanticScholar.paperId}/citations`);
+        url.searchParams.set('limit', '100');
+        url.searchParams.set('fields', 'title,authors,year,url');
+        const data = await getJson(url);
+        const list = el('ol', 'citation-list');
+        for (const record of data.data || []) {
+          const paper = record.citingPaper || {};
+          const item = el('li');
+          const titleNode = paper.url ? el('a', '', paper.title || t('未命名文献', 'Untitled work')) : el('span', '', paper.title || t('未命名文献', 'Untitled work'));
+          if (paper.url) { titleNode.href = paper.url; titleNode.target = '_blank'; titleNode.rel = 'noopener noreferrer'; }
+          item.append(titleNode, el('small', '', [(paper.authors || []).map((author) => author.name).join(', '), paper.year].filter(Boolean).join(' · '))); list.append(item);
+        }
+        semanticSection.append(list.childNodes.length ? list : el('p', '', t('暂无 Semantic Scholar 施引记录。', 'No Semantic Scholar citing records.')));
+        if (data.next != null) semanticSection.append(el('p', 'citation-more', t('显示前 100 条记录', 'Showing the first 100 records')));
+      } catch (error) { semanticSection.append(el('p', '', t('Semantic Scholar 详情暂不可用。', 'Semantic Scholar details are temporarily unavailable.'))); }
+    } else semanticSection.append(el('p', '', t('暂无 Semantic Scholar 匹配记录。', 'No Semantic Scholar match.')));
+    fragment.append(semanticSection);
     const openalexSection = el('section', 'citation-source');
     openalexSection.append(el('h4', '', 'OpenAlex'));
     if (summary.openalex?.id) {
@@ -186,9 +210,12 @@
     const labels = { 'journal-article': t('期刊论文', 'Article'), 'conference-paper': t('会议论文', 'Conference'), preprint: t('预印本', 'Preprint') };
     for (const work of visible) {
       const article = el('article', 'publication');
-      article.append(el('span', 'publication-year', work.year || '—'));
       const journal = journals[work.journal];
       const cover = journalCover(work.journal);
+      const side = el('div', 'publication-side');
+      side.append(el('span', 'publication-year', work.year || '—'));
+      if (cover) side.append(cover);
+      article.append(side);
       const body = el('div', 'publication-body');
       const heading = el('h3');
       const link = el('a', '', work.title);
@@ -234,12 +261,13 @@
       if (work.type !== 'preprint') facts.append(el('span', 'fact-badge fact-pending', t('单篇 SCI/EI 待核验', 'Article SCI/EI unverified')));
       const citations = citationSummary(work);
       if (citations.google && Number.isFinite(Number(citations.google.total))) facts.append(el('span', 'fact-badge fact-citation', `Google Scholar ${t('总引用', 'total')} ${number(citations.google.total)}`));
+      else if (citations.semanticScholar) facts.append(el('span', 'fact-badge fact-citation', `Semantic Scholar ${t('总引用', 'total')} ${number(citations.semanticScholar.total)}`));
       else if (citations.openalex) facts.append(el('span', 'fact-badge fact-citation', `OpenAlex ${t('总引用', 'total')} ${number(citations.openalex.total)} · ${t('备用', 'fallback')}`));
       if (citations.openalex) facts.append(el('span', 'fact-badge fact-citation', `OpenAlex ${t('他引', 'external')} ${number(citations.openalex.external)}`));
       if (citations.chinese && Number.isFinite(Number(citations.chinese.total))) facts.append(el('span', 'fact-badge fact-cnki', `CNKI ${t('中文施引', 'Chinese citing')} ${number(citations.chinese.total)}`));
       else facts.append(el('span', 'fact-badge fact-pending', `CNKI ${t('待导入', 'pending')}`));
       if (facts.childNodes.length) body.append(facts);
-      if (citations.openalex || citations.google || citations.chinese) {
+      if (citations.semanticScholar || citations.openalex || citations.google || citations.chinese) {
         const detailButton = el('button', 'citation-detail-button', t('查看施引文献详情', 'View citing documents'));
         detailButton.type = 'button'; detailButton.setAttribute('aria-expanded', 'false');
         const detail = el('div', 'citation-detail'); detail.hidden = true;
@@ -249,10 +277,6 @@
           if (opening && !detail.dataset.loaded) { detail.dataset.loaded = 'true'; showCitationDetails(detail, work, citations); }
         });
         body.append(detailButton, detail);
-      }
-      if (cover) {
-        const visual = el('div', 'publication-journal-visual');
-        visual.append(cover); body.append(visual);
       }
       article.append(body); fragment.append(article);
     }
@@ -303,13 +327,15 @@
 
   function renderStatus() {
     const dot = document.getElementById('data-status-dot');
-    dot.classList.toggle('is-live', citationState === 'live' || citationState === 'daily');
+    dot.classList.toggle('is-live', citationState === 'semantic' || citationState === 'live' || citationState === 'daily');
     dot.classList.toggle('is-error', citationState === 'error');
     const time = updatedAt?.toLocaleString(language === 'zh' ? 'zh-CN' : 'en-US', { dateStyle: 'medium', timeStyle: 'short' });
     document.getElementById('data-status').textContent = citationState === 'loading'
       ? t('正在获取最新引用数据…', 'Loading current citation data…')
       : citationState === 'error'
         ? t('引用数据暂不可用；论文列表仍可浏览。', 'Citation data is temporarily unavailable; the works list remains available.')
+        : citationState === 'semantic'
+          ? t(`每日学术数据更新：${time} · Semantic Scholar 已匹配 ${coverage} 项成果`, `Daily academic update: ${time} · ${coverage} works matched in Semantic Scholar`)
         : citationState === 'daily'
           ? t(`每日学术数据更新：${time} · OpenAlex 已匹配 ${coverage} 项 ORCID 成果`, `Daily academic update: ${time} · ${coverage} ORCID works matched in OpenAlex`)
           : t(`OpenAlex 本次获取：${time} · 已匹配 ${coverage} 项 ORCID 成果${orcidLive ? '' : ' · 论文列表采用每日快照'}`, `OpenAlex fetched ${time} · ${coverage} ORCID works matched${orcidLive ? '' : ' · Publication list uses the daily snapshot'}`);
@@ -323,6 +349,8 @@
     document.getElementById('works-search').placeholder = t('搜索标题、期刊或 DOI', 'Search title, journal or DOI');
     document.getElementById('citations-total').textContent = document.getElementById('citations-total').dataset.value ? number(document.getElementById('citations-total').dataset.value) : '—';
     document.getElementById('citations-external').textContent = document.getElementById('citations-external').dataset.value ? number(document.getElementById('citations-external').dataset.value) : '—';
+    document.getElementById('citations-total-source').textContent = semanticAvailable ? 'Semantic Scholar' : t('OpenAlex · 备用', 'OpenAlex · fallback');
+    document.getElementById('citations-external-source').textContent = semanticAvailable ? t('OpenAlex · 他引', 'OpenAlex · external') : t('OpenAlex · 备用', 'OpenAlex · fallback');
     renderScholar();
     renderWorks(); renderService(); renderReviewerMetrics(); renderStatus();
   }
@@ -377,8 +405,10 @@
         }
         page += 1;
       } while ((page - 1) * 200 < count && page <= 10);
-      document.getElementById('citations-total').dataset.value = String(total);
-      document.getElementById('citations-external').dataset.value = String(Math.max(0, total - self));
+      if (!semanticAvailable) {
+        document.getElementById('citations-total').dataset.value = String(total);
+        document.getElementById('citations-external').dataset.value = String(Math.max(0, total - self));
+      }
       const byDoi = new Map(matched.map((item) => [doiKey(item.doi), item]));
       works = works.map((work) => {
         const item = byDoi.get(doiKey(work.doi));
@@ -392,9 +422,8 @@
           firstAuthor: first?.author?.orcid === orcid || firstName === 'baoxuanwang' || firstName === 'wangbaoxuan'
         };
       });
-      coverage = `${matched.length}/${dois.length}`;
-      updatedAt = new Date(); citationState = 'live';
-    } catch (error) { citationState = dailySnapshot ? 'daily' : 'error'; console.warn('OpenAlex refresh unavailable:', error); }
+      if (!semanticAvailable) { coverage = `${matched.length}/${dois.length}`; updatedAt = new Date(); citationState = 'live'; }
+    } catch (error) { citationState = semanticAvailable ? 'semantic' : dailySnapshot ? 'daily' : 'error'; console.warn('OpenAlex refresh unavailable:', error); }
     render();
   }
 

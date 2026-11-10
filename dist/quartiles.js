@@ -9,6 +9,8 @@ window.BAOXUAN_QUARTILES = {
   'Geoderma': { cas: 1, jcr: 1, category: '农林科学' },
   'Journal of Offshore Mechanics and Arctic Engineering': { cas: 4, jcr: 3, category: '工程技术' },
   'Journal of Wind Engineering and Industrial Aerodynamics': { cas: 2, jcr: 1, category: '工程技术' },
+  'Marine Structures': { cas: 2, jcr: 1, category: '工程技术', casSource: 'https://www.sci365.cn/journals/marine-structures-09518339/', jcrSource: 'https://www.sci365.cn/journals/marine-structures-09518339/' },
+  'Materials & Design': { cas: 2, jcr: 1, category: '材料科学', casSource: 'https://www.sci365.cn/journals/materials-design-02641275/', jcrSource: 'https://www.sci365.cn/journals/materials-design-02641275/' },
   'Measurement': { cas: 2, jcr: 1, category: '工程技术' },
   'Ocean Engineering': { cas: 2, jcr: 1, category: '工程技术' },
   'Polymers': { cas: 3, jcr: 1, category: '工程技术', casSource: 'https://www.scholay.com/journal/17172/polymers', jcrSource: 'https://www.mdpi.com/journal/polymers/stats' },

@@ -27,6 +27,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Refresh daily publications and citations
         run: node scripts/update-academic-data.mjs
+      - name: Refresh Semantic Scholar citations
+        run: node scripts/update-semantic-scholar-data.mjs
       - name: Refresh Google Scholar when configured
         env:
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
