@@ -187,7 +187,11 @@
 
   function renderWorks() {
     const query = document.getElementById('works-search').value.trim().toLowerCase();
-    const visible = works.filter((work) => (filter === 'all' || work.type === filter) && (!query || `${work.title} ${work.journal} ${work.doi} ${work.year}`.toLowerCase().includes(query)));
+    const visible = works.filter((work) => {
+      const firstAuthor = Boolean(work.firstAuthor ?? dailySnapshot?.works?.[doiKey(work.doi)]?.firstAuthor);
+      const matchesFilter = filter === 'all' || (filter === 'first-author' ? firstAuthor : work.type === filter);
+      return matchesFilter && (!query || `${work.title} ${work.journal} ${work.doi} ${work.year}`.toLowerCase().includes(query));
+    });
     const list = document.getElementById('publication-list');
     const fragment = document.createDocumentFragment();
     const labels = { 'journal-article': t('期刊论文', 'Article'), 'conference-paper': t('会议论文', 'Conference'), preprint: t('预印本', 'Preprint') };
