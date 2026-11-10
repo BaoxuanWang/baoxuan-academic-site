@@ -129,13 +129,13 @@
               </div>
             </div>
             <div class="metrics-panel" aria-label="Citation statistics">
-              <div class="metric"><span class="metric-label" data-zh="被引次数" data-en="Citations">被引次数</span><strong id="citations-total">—</strong><span class="metric-note" id="citations-total-source">Semantic Scholar</span></div>
-              <div class="metric"><span class="metric-label" data-zh="他引次数" data-en="External citations">他引次数</span><strong id="citations-external">—</strong><span class="metric-note" id="citations-external-source">Semantic Scholar</span></div>
+              <div class="metric"><span class="metric-label" data-zh="被引次数" data-en="Citations">被引次数</span><strong id="citations-total">—</strong><span class="metric-note">OpenAlex</span></div>
+              <div class="metric"><span class="metric-label" data-zh="他引次数" data-en="External citations">他引次数</span><strong id="citations-external">—</strong><span class="metric-note">OpenAlex</span></div>
               <div class="metric"><span class="metric-label" data-zh="被引次数" data-en="Citations">被引次数</span><strong id="scholar-citations-total">—</strong><span class="metric-note">Google Scholar · <span id="scholar-updated">待录入</span></span></div>
               <div class="metric"><span class="metric-label" data-zh="他引次数" data-en="External citations">他引次数</span><strong id="scholar-citations-external">—</strong><span class="metric-note">Google Scholar · <span id="scholar-external-updated">待录入</span></span></div>
             </div>
             <div class="data-note"><span class="status-dot" id="data-status-dot"></span><span id="data-status" aria-live="polite">正在获取最新公开数据…</span></div>
-            <p class="method-note" data-zh="Semantic Scholar 每日自动更新总引用；他引由 OpenAlex 扣除可识别的本人署名施引论文。Google Scholar 在配置服务密钥后同步更新，中国知网中文施引单独展示。不同数据库收录范围不同，数字可能存在差异。" data-en="Semantic Scholar refreshes total citations daily. External citations use OpenAlex after excluding identifiable citing papers bearing my authorship. Google Scholar updates when its service key is configured, while CNKI Chinese citations are shown separately. Counts can differ because database coverage varies.">Semantic Scholar 每日自动更新总引用；他引由 OpenAlex 扣除可识别的本人署名施引论文。Google Scholar 在配置服务密钥后同步更新，中国知网中文施引单独展示。不同数据库收录范围不同，数字可能存在差异。</p>
+            <p class="method-note" data-zh="Google Scholar 配置服务密钥后每日自动更新逐篇总引用；未配置或暂不可用时，自动使用 OpenAlex。OpenAlex 他引扣除可识别的本人署名论文引用。中国知网中文施引单独展示，按导出的检索记录更新。" data-en="Per-paper Google Scholar totals refresh daily when the service key is configured; OpenAlex is used when Scholar is unavailable. OpenAlex external citations exclude identifiable citing papers bearing my authorship. CNKI Chinese citations are listed separately from exported search records.">Google Scholar 配置服务密钥后每日自动更新逐篇总引用；未配置或暂不可用时，自动使用 OpenAlex。OpenAlex 他引扣除可识别的本人署名论文引用。中国知网中文施引单独展示，按导出的检索记录更新。</p>
             <section class="journal-portfolio" aria-labelledby="journal-portfolio-title">
               <div class="portfolio-head"><div><span class="chart-kicker" data-zh="发表期刊统计" data-en="PUBLICATION VENUES">发表期刊统计</span><h3 id="journal-portfolio-title" data-zh="发表期刊与论文构成" data-en="Journals and publication profile">发表期刊与论文构成</h3></div><div class="portfolio-totals" id="portfolio-totals"></div></div>
               <div class="journal-portfolio-grid" id="journal-portfolio-grid" aria-live="polite"></div>
@@ -238,7 +238,6 @@
     <script src="./journals.js"></script>
     <script src="./quartiles.js"></script>
     <script src="./scholar.js"></script>
-    <script src="./semantic-scholar.js"></script>
     <script src="./cnki.js"></script>
     <script src="./service.js"></script>
     <script src="./script.js"></script>
