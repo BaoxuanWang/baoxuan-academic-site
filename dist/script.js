@@ -6,6 +6,7 @@
   const scholar = window.BAOXUAN_SCHOLAR || {};
   const cnki = window.BAOXUAN_CNKI_CITATIONS || { works: {} };
   const service = window.BAOXUAN_SERVICE || { editorial: [], reviewers: [] };
+  const conferenceData = window.BAOXUAN_CONFERENCES || { generatedAt: null, items: [] };
   const dailySnapshot = window.BAOXUAN_ACADEMIC_SNAPSHOT || null;
   const xinruiSource = 'https://kjc.cdmc.edu.cn/module/download/downfile.jsp?classid=0&filename=77490d1d77c14c02936e1737479be025.xlsx';
   let language = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'zh';
@@ -316,6 +317,62 @@
     reviewer.replaceChildren(...service.reviewers.map((name) => el('li', '', name)));
   }
 
+  function conferenceDate(value) {
+    if (!value) return null;
+    const date = new Date(`${value}T12:00:00`);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  function formatConferenceDate(value) {
+    const date = conferenceDate(value);
+    return date ? new Intl.DateTimeFormat(language === 'zh' ? 'zh-CN' : 'en-GB', { year: 'numeric', month: 'short', day: 'numeric' }).format(date) : '—';
+  }
+
+  function deadlineState(item) {
+    const deadline = conferenceDate(item.deadline);
+    if (!deadline) return { rank: 1, cls: 'is-tba', label: t('截止时间待公布', 'Deadline TBA') };
+    const todayKey = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+    const today = conferenceDate(todayKey);
+    const days = Math.ceil((deadline - today) / 86400000);
+    if (days < 0) return { rank: 2, cls: 'is-closed', label: t('投稿已截止', 'Call closed') };
+    if (days === 0) return { rank: 0, cls: 'is-urgent', label: t('今日截止', 'Due today') };
+    if (days <= 30) return { rank: 0, cls: 'is-urgent', label: t(`${days} 天后截止`, `Due in ${days} days`) };
+    return { rank: 0, cls: 'is-open', label: t('征稿开放', 'Call open') };
+  }
+
+  function renderConferences() {
+    const grid = document.getElementById('conference-grid');
+    if (!grid) return;
+    const items = conferenceData.items.map((item) => ({ item, state: deadlineState(item) }))
+      .sort((a, b) => a.state.rank - b.state.rank || String(a.item.deadline || a.item.dateStart).localeCompare(String(b.item.deadline || b.item.dateStart)));
+    const fragment = document.createDocumentFragment();
+    for (const { item, state } of items) {
+      const card = el('a', `conference-card ${state.cls}`);
+      card.href = item.source; card.target = '_blank'; card.rel = 'noopener noreferrer';
+      const top = el('div', 'conference-card-top');
+      top.append(el('span', 'conference-acronym', item.acronym), el('span', 'conference-status', state.label));
+      const heading = el('h3', '', language === 'zh' ? item.nameZh : item.nameEn);
+      const topic = el('p', 'conference-topic', language === 'zh' ? item.topicZh : item.topicEn);
+      const facts = el('dl', 'conference-facts');
+      for (const [label, value, cls] of [
+        [t('会议时间', 'Conference'), `${formatConferenceDate(item.dateStart)} — ${formatConferenceDate(item.dateEnd)}`, ''],
+        [t('地点', 'Location'), language === 'zh' ? item.locationZh : item.locationEn, ''],
+        [t('摘要截止', 'Abstract deadline'), item.deadline ? formatConferenceDate(item.deadline) : t('待公布', 'To be announced'), 'conference-deadline']
+      ]) {
+        const row = el('div', `conference-fact ${cls}`.trim());
+        row.append(el('dt', '', label), el('dd', '', value)); facts.append(row);
+      }
+      const source = el('span', 'conference-source', `${item.sourceStatus === 'verified' ? t('官网已核验', 'Official source checked') : t('最近有效数据', 'Latest valid record')} · ${t('查看通知', 'Open notice')} ↗`);
+      card.append(top, heading, topic, facts, source); fragment.append(card);
+    }
+    grid.replaceChildren(fragment);
+    const updated = conferenceData.generatedAt ? new Date(conferenceData.generatedAt) : null;
+    const checked = updated && !Number.isNaN(updated.getTime())
+      ? updated.toLocaleString(language === 'zh' ? 'zh-CN' : 'en-GB', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Shanghai' })
+      : t('等待首次自动检查', 'Awaiting first automated check');
+    document.getElementById('conference-updated').textContent = t(`每日自动核验 · 最近更新 ${checked}`, `Checked daily · Last updated ${checked}`);
+  }
+
   function renderStatus() {
     const dot = document.getElementById('data-status-dot');
     dot.classList.toggle('is-live', citationState === 'live' || citationState === 'daily');
@@ -339,7 +396,7 @@
     document.getElementById('citations-total').textContent = document.getElementById('citations-total').dataset.value ? number(document.getElementById('citations-total').dataset.value) : '—';
     document.getElementById('citations-external').textContent = document.getElementById('citations-external').dataset.value ? number(document.getElementById('citations-external').dataset.value) : '—';
     renderScholar();
-    renderWorks(); renderService(); renderReviewerMetrics(); renderStatus();
+    renderWorks(); renderConferences(); renderService(); renderReviewerMetrics(); renderStatus();
   }
 
   async function getJson(url) {
