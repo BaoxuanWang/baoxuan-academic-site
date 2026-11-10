@@ -82,16 +82,23 @@
 
   function renderPortfolio() {
     const articles = works.filter((work) => work.type === 'journal-article' && work.journal);
+    const conferencePapers = works.filter((work) => work.type === 'conference-paper');
+    const preprints = works.filter((work) => work.type === 'preprint');
     const groups = new Map();
     for (const work of articles) groups.set(work.journal, (groups.get(work.journal) || 0) + 1);
     const sci = articles.filter((work) => journals[work.journal]?.wos === 'SCIE').length;
-    const firstAuthor = articles.filter((work) => work.firstAuthor ?? dailySnapshot?.works?.[doiKey(work.doi)]?.firstAuthor).length;
+    const firstAuthorWorks = works.filter((work) => work.firstAuthor ?? dailySnapshot?.works?.[doiKey(work.doi)]?.firstAuthor);
+    const firstAuthor = firstAuthorWorks.length;
+    const firstAuthorArticles = firstAuthorWorks.filter((work) => work.type === 'journal-article').length;
+    const firstAuthorConferences = firstAuthorWorks.filter((work) => work.type === 'conference-paper').length;
     const totals = document.getElementById('portfolio-totals');
     const items = [
       [t('期刊论文', 'Journal articles'), articles.length],
       [t('发表期刊', 'Journals'), groups.size],
       [t('SCIE 期刊论文', 'SCIE journal articles'), sci],
-      [t('第一作者', 'First author'), firstAuthor]
+      [t('会议论文', 'Conference papers'), conferencePapers.length],
+      [t('预印本', 'Preprints'), preprints.length],
+      [t('第一作者成果', 'First-author works'), firstAuthor]
     ];
     totals.replaceChildren(...items.map(([label, value]) => {
       const item = el('span', 'portfolio-total');
@@ -112,8 +119,8 @@
     }
     grid.replaceChildren(fragment);
     document.getElementById('portfolio-author-note').textContent = t(
-      '第一作者按 ORCID 与完整作者顺序统计，并以规范姓名匹配补足缺失的 ORCID 关联；通讯作者需由论文原文核验。',
-      'First authorship uses ORCID and full author order, with normalized-name matching when an ORCID link is missing. Corresponding authorship requires verification from the paper.'
+      `第一作者按全部成果的完整作者顺序统计：期刊论文 ${firstAuthorArticles} 篇、会议论文 ${firstAuthorConferences} 篇，共 ${firstAuthor} 篇。SCIE 数量表示期刊覆盖；ASME/OMAE 会议论文由 ASME 提交 EI Compendex 等数据库，单篇最终收录仍以检索记录为准。通讯作者需由论文原文核验。`,
+      `First authorship uses the full author order across all works: ${firstAuthorArticles} journal articles and ${firstAuthorConferences} conference papers, ${firstAuthor} in total. The SCIE count indicates journal coverage. ASME submits OMAE proceedings to EI Compendex and other indexes; article-level inclusion still requires a database record. Corresponding authorship requires verification from the paper.`
     );
   }
 
@@ -234,6 +241,11 @@
       }
       if (journal?.wos) facts.append(el('span', 'fact-badge fact-coverage', t(`期刊 ${journal.wos}`, `Journal ${journal.wos}`)));
       if (journal?.ei) facts.append(el('span', 'fact-badge fact-coverage', t('期刊 EI', 'Journal EI')));
+      if (work.type === 'conference-paper' && doiKey(work.doi).startsWith('10.1115/omae')) {
+        const eiSubmission = el('a', 'fact-badge fact-coverage', t('ASME 已提交 EI Compendex', 'ASME submitted to EI Compendex'));
+        eiSubmission.href = 'https://omae.secure-platform.com/a/page/Help/author_resources/Indexing';
+        eiSubmission.target = '_blank'; eiSubmission.rel = 'noopener noreferrer'; facts.append(eiSubmission);
+      }
       if (work.type !== 'preprint') facts.append(el('span', 'fact-badge fact-pending', t('单篇 SCI/EI 待核验', 'Article SCI/EI unverified')));
       const citations = citationSummary(work);
       if (citations.google && Number.isFinite(Number(citations.google.total))) facts.append(el('span', 'fact-badge fact-citation', `Google Scholar ${t('总引用', 'total')} ${number(citations.google.total)}`));
@@ -412,3 +424,4 @@
   document.getElementById('year').textContent = String(new Date().getFullYear());
   render(); loadOrcid().then(loadCitations);
 })();
+
