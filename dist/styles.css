@@ -204,6 +204,25 @@ a.portfolio-journal:hover{transform:translateY(-2px);box-shadow:0 7px 18px rgba(
 .portfolio-journal-copy strong{display:block;font-size:10px;line-height:1.35;overflow-wrap:anywhere}
 .portfolio-journal-copy small{display:block;color:#5a948d;font-size:9px;margin-top:5px}
 .portfolio-note{font-size:10px;color:#7d918e;line-height:1.7;margin:14px 0 0}
+.conference-section{background:#f2f6f1}
+.conference-heading p{font-size:12px;color:#708784;line-height:1.8;margin:11px 0 0;max-width:720px}
+.conference-update{display:flex;align-items:center;gap:9px;color:#527b78;font-size:11px;margin:-5px 0 18px}
+.conference-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.conference-card{display:block;background:#fff;border:1px solid #dce8e1;border-left:3px solid #65a49a;padding:21px 22px 19px;box-shadow:0 7px 20px rgba(22,65,70,.045);transition:transform .2s,box-shadow .2s,border-color .2s}
+.conference-card:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(22,65,70,.09);border-color:#bcd6cc}
+.conference-card.is-urgent{border-left-color:#c29548}.conference-card.is-closed{border-left-color:#b9c3c0}.conference-card.is-tba{border-left-color:#7a9ea6}
+.conference-card-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.conference-acronym{color:#337d78;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.conference-status{border-radius:999px;background:#eaf4ee;color:#32736d;padding:5px 8px;font-size:9px;font-weight:700;white-space:nowrap}
+.is-urgent .conference-status{background:#f5ead5;color:#825c20}.is-closed .conference-status{background:#eef0ee;color:#788480}.is-tba .conference-status{background:#eaf0f1;color:#52747a}
+.conference-card h3{font-family:Georgia,"Noto Serif SC",serif;font-size:19px;line-height:1.45;font-weight:400;color:#173f4a;margin:0 0 8px}
+.conference-topic{color:#6f8482;font-size:11px;line-height:1.7;min-height:38px;margin:0 0 16px}
+.conference-facts{margin:0;border-top:1px solid #edf1ed}
+.conference-fact{display:grid;grid-template-columns:82px minmax(0,1fr);gap:10px;padding:8px 0;border-bottom:1px solid #edf1ed;font-size:11px;line-height:1.5}
+.conference-fact dt{color:#879693}.conference-fact dd{margin:0;color:#355a60;font-weight:600}
+.conference-deadline dd{color:#8a6429}
+.conference-source{display:block;color:#42807d;font-size:10px;margin-top:14px}
+.conference-method{font-size:10px;color:#7d918e;line-height:1.8;margin:16px 0 0;max-width:920px}
 .citation-detail-button{appearance:none;border:0;background:transparent;color:#267d7c;border-bottom:1px solid #a7ccc1;padding:0 0 3px;margin-top:12px;font-size:10px;cursor:pointer}
 .citation-detail{margin-top:12px;border:1px solid #dce8e1;background:#fbfdfb;padding:15px}
 .citation-detail[hidden]{display:none}
@@ -311,7 +330,9 @@ a.portfolio-journal:hover{transform:translateY(-2px);box-shadow:0 7px 18px rgba(
 .metric-note{letter-spacing:.04em;line-height:1.5}
 @media(max-width:1050px){.metrics-panel{grid-template-columns:repeat(2,minmax(0,1fr))}.metric:nth-child(3){border-left:0;border-top:1px solid #cfddd8}.metric:nth-child(4){border-top:1px solid #cfddd8}}
 @media(max-width:1050px){.journal-portfolio-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.portfolio-head{display:block}.portfolio-totals{justify-content:flex-start;margin-top:16px}}
+@media(max-width:840px){.conference-grid{grid-template-columns:1fr}}
 @media(max-width:620px){.metric{padding:18px 15px;min-height:108px}.metric strong{font-size:32px}}
 @media(max-width:1120px){.stock-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.market-workspace{grid-template-columns:minmax(0,1.35fr) minmax(240px,.8fr)}}
 @media(max-width:840px){.stock-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.stock-card{padding:13px}.market-workspace{grid-template-columns:minmax(0,1.5fr) minmax(230px,.8fr)}}
-@media(max-width:620px){.section{padding-top:58px;padding-bottom:58px}.hero{min-height:0}.hero-art{min-height:250px}.journal-portfolio{padding:18px;margin-left:-6px;margin-right:-6px}.journal-portfolio-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.portfolio-total{min-width:calc(50% - 4px)}.stock-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.stock-card{padding:15px}.market-workspace{grid-template-columns:1fr}.chart-card,.holding-card{padding:20px}.chart-head{display:block}.chart-quote{text-align:left;margin-top:15px}.chart-quote strong{font-size:26px}.chart-toolbar,.gold-chart-toolbar{align-items:flex-start;flex-direction:column}.price-chart{height:300px}.gold-chart{height:310px}.gold-card{padding:19px;align-items:flex-start}.gold-value strong{font-size:23px}}
+@media(max-width:620px){.section{padding-top:58px;padding-bottom:58px}.hero{min-height:0}.hero-art{min-height:250px}.journal-portfolio{padding:18px;margin-left:-6px;margin-right:-6px}.journal-portfolio-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.portfolio-total{min-width:calc(50% - 4px)}.conference-card{padding:18px 17px}.conference-card-top{align-items:flex-start}.conference-fact{grid-template-columns:74px minmax(0,1fr)}.stock-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.stock-card{padding:15px}.market-workspace{grid-template-columns:1fr}.chart-card,.holding-card{padding:20px}.chart-head{display:block}.chart-quote{text-align:left;margin-top:15px}.chart-quote strong{font-size:26px}.chart-toolbar,.gold-chart-toolbar{align-items:flex-start;flex-direction:column}.price-chart{height:300px}.gold-chart{height:310px}.gold-card{padding:19px;align-items:flex-start}.gold-value strong{font-size:23px}}
+
