@@ -5,6 +5,11 @@ const orcidId = '0000-0001-8802-6800';
 const orcidUrl = `https://orcid.org/${orcidId}`;
 const target = resolve('dist/works.js');
 const targetNames = new Set(['baoxuanwang', 'wangbaoxuan']);
+const authorNameCorrections = new Map([
+  ['lianghuaxu', 'Xu Liang'],
+  ['yuehuachen', 'Yue Chen'],
+  ['haitaozhang', 'Hao Zhang']
+]);
 
 async function getJson(url, headers = {}) {
   const response = await fetch(url, { headers: { Accept: 'application/json', ...headers } });
@@ -20,6 +25,10 @@ function normalizeName(value = '') {
   return String(value).normalize('NFKD').toLowerCase().replace(/[^a-z]/g, '');
 }
 
+function canonicalAuthorName(value = '') {
+  return authorNameCorrections.get(normalizeName(value)) || value;
+}
+
 function isTargetAuthor(entry = {}) {
   return entry.author?.orcid === orcidUrl || targetNames.has(normalizeName(entry.author?.display_name));
 }
@@ -27,7 +36,7 @@ function isTargetAuthor(entry = {}) {
 async function crossrefAuthors(doi) {
   try {
     const data = await getJson(`https://api.crossref.org/works/${encodeURIComponent(doi)}`);
-    const authors = (data.message?.author || []).map((author) => [author.given, author.family].filter(Boolean).join(' ').trim()).filter(Boolean);
+    const authors = (data.message?.author || []).map((author) => canonicalAuthorName([author.given, author.family].filter(Boolean).join(' ').trim())).filter(Boolean);
     return { authors, firstAuthor: targetNames.has(normalizeName(authors[0])) };
   } catch (error) {
     console.warn(`Crossref author fallback failed for ${doi}: ${error.message}`);
@@ -102,7 +111,7 @@ async function citationSnapshot(works) {
       total,
       external: Math.max(0, total - self),
       firstAuthor: isTargetAuthor(first),
-      authors: authorships.map((entry) => entry.author?.display_name).filter(Boolean)
+      authors: authorships.map((entry) => canonicalAuthorName(entry.author?.display_name)).filter(Boolean)
     };
   }
   for (const work of works) {
@@ -127,3 +136,4 @@ const snapshot = { generatedAt: new Date().toISOString(), source: 'ORCID + OpenA
 const output = `window.BAOXUAN_WORKS=${JSON.stringify(works)};\nwindow.BAOXUAN_ACADEMIC_SNAPSHOT=${JSON.stringify(snapshot)};\n`;
 await writeFile(target, output, 'utf8');
 console.log(`Wrote ${works.length} works and ${citations.coverage} OpenAlex coverage to ${target}`);
+
