@@ -18,6 +18,12 @@
   let updatedAt = dailySnapshot?.generatedAt ? new Date(dailySnapshot.generatedAt) : null;
   const t = (zh, en) => language === 'zh' ? zh : en;
   const doiKey = (value) => String(value || '').replace(/^https?:\/\/(?:dx\.)?doi\.org\//i, '').trim().toLowerCase();
+  const isFirstAuthorWork = (work) => {
+    const snapshot = dailySnapshot?.works?.[doiKey(work.doi)];
+    const authors = work.authors?.length ? work.authors : snapshot?.authors || [];
+    const firstName = String(authors[0] || '').toLowerCase().replace(/[^a-z]/g, '');
+    return work.firstAuthor === true || snapshot?.firstAuthor === true || firstName === 'baoxuanwang' || firstName === 'wangbaoxuan';
+  };
   const number = (value) => Number(value).toLocaleString(language === 'zh' ? 'zh-CN' : 'en-US');
   const el = (tag, cls, text) => { const node = document.createElement(tag); if (cls) node.className = cls; if (text != null) node.textContent = text; return node; };
   if (dailySnapshot) {
@@ -88,7 +94,7 @@
     const groups = new Map();
     for (const work of articles) groups.set(work.journal, (groups.get(work.journal) || 0) + 1);
     const sci = articles.filter((work) => journals[work.journal]?.wos === 'SCIE').length;
-    const firstAuthorWorks = works.filter((work) => work.firstAuthor ?? dailySnapshot?.works?.[doiKey(work.doi)]?.firstAuthor);
+    const firstAuthorWorks = works.filter(isFirstAuthorWork);
     const firstAuthor = firstAuthorWorks.length;
     const firstAuthorArticles = firstAuthorWorks.filter((work) => work.type === 'journal-article').length;
     const firstAuthorConferences = firstAuthorWorks.filter((work) => work.type === 'conference-paper').length;
@@ -189,7 +195,7 @@
   function renderWorks() {
     const query = document.getElementById('works-search').value.trim().toLowerCase();
     const visible = works.filter((work) => {
-      const firstAuthor = Boolean(work.firstAuthor ?? dailySnapshot?.works?.[doiKey(work.doi)]?.firstAuthor);
+      const firstAuthor = isFirstAuthorWork(work);
       const matchesFilter = filter === 'all' || (filter === 'first-author' ? firstAuthor : work.type === filter);
       return matchesFilter && (!query || `${work.title} ${work.journal} ${work.doi} ${work.year}`.toLowerCase().includes(query));
     });
