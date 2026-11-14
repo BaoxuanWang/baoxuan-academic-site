@@ -143,6 +143,14 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offse
 .service-block ul{list-style:none;margin:0;padding:0}
 .editorial-list li{border-top:1px solid #e8efea;padding:15px 0;font-size:15px;color:#2a515a;line-height:1.5}
 .editorial-list li:last-child{border-bottom:1px solid #e8efea}
+.editorial-journal{display:grid;grid-template-columns:64px minmax(0,1fr);gap:16px;align-items:start}
+.editorial-cover{display:block;width:64px;height:90px;background:#f4f7f5;border:1px solid #e1e8e3;overflow:hidden}
+.editorial-cover img{display:block;width:100%;height:100%;object-fit:contain}
+.editorial-copy{min-width:0}.editorial-name{font-size:14px;font-weight:600;overflow-wrap:anywhere}
+.editorial-indexes{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.editorial-index{font-size:10px;line-height:1.5;padding:3px 6px;background:#f3f5f4;color:#687b7c;border:1px solid #e7ece8}
+.editorial-index.is-indexed{background:#edf5f0;color:#286859;border-color:#d7e7de}
+.editorial-list li.editorial-source-note{display:block;font-size:10px;color:#738585;line-height:1.6}
 .reviewer-list{columns:2;column-gap:30px}
 .reviewer-list li{break-inside:avoid;border-top:1px solid #edf1ed;padding:9px 0;color:#587078;font-size:12px;line-height:1.55}
 .profile-section{background:radial-gradient(circle at 90% 0,rgba(91,151,146,.3),transparent 35%),#123b49}
@@ -335,4 +343,3 @@ a.portfolio-journal:hover{transform:translateY(-2px);box-shadow:0 7px 18px rgba(
 @media(max-width:1120px){.stock-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.market-workspace{grid-template-columns:minmax(0,1.35fr) minmax(240px,.8fr)}}
 @media(max-width:840px){.stock-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.stock-card{padding:13px}.market-workspace{grid-template-columns:minmax(0,1.5fr) minmax(230px,.8fr)}}
 @media(max-width:620px){.section{padding-top:58px;padding-bottom:58px}.hero{min-height:0}.hero-art{min-height:250px}.journal-portfolio{padding:18px;margin-left:-6px;margin-right:-6px}.journal-portfolio-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.portfolio-total{min-width:calc(50% - 4px)}.conference-card{padding:18px 17px}.conference-card-top{align-items:flex-start}.conference-fact{grid-template-columns:74px minmax(0,1fr)}.stock-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.stock-card{padding:15px}.market-workspace{grid-template-columns:1fr}.chart-card,.holding-card{padding:20px}.chart-head{display:block}.chart-quote{text-align:left;margin-top:15px}.chart-quote strong{font-size:26px}.chart-toolbar,.gold-chart-toolbar{align-items:flex-start;flex-direction:column}.price-chart{height:300px}.gold-chart{height:310px}.gold-card{padding:19px;align-items:flex-start}.gold-value strong{font-size:23px}}
-

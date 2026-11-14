@@ -18,6 +18,10 @@
   let updatedAt = dailySnapshot?.generatedAt ? new Date(dailySnapshot.generatedAt) : null;
   const t = (zh, en) => language === 'zh' ? zh : en;
   const doiKey = (value) => String(value || '').replace(/^https?:\/\/(?:dx\.)?doi\.org\//i, '').trim().toLowerCase();
+  const canonicalAuthorName = (value) => {
+    const key = String(value || '').toLowerCase().replace(/[^a-z]/g, '');
+    return ({ lianghuaxu: 'Xu Liang', yuehuachen: 'Yue Chen', haitaozhang: 'Hao Zhang' })[key] || value;
+  };
   const isFirstAuthorWork = (work) => {
     const snapshot = dailySnapshot?.works?.[doiKey(work.doi)];
     const authors = work.authors?.length ? work.authors : snapshot?.authors || [];
@@ -166,7 +170,7 @@
           const href = item.doi || item.primary_location?.landing_page_url;
           const titleNode = href ? el('a', '', title) : el('span', '', title);
           if (href) { titleNode.href = href; titleNode.target = '_blank'; titleNode.rel = 'noopener noreferrer'; }
-          const authors = (item.authorships || []).slice(0, 4).map((author) => author.author?.display_name).filter(Boolean).join(', ');
+          const authors = (item.authorships || []).slice(0, 4).map((author) => canonicalAuthorName(author.author?.display_name)).filter(Boolean).join(', ');
           entry.append(titleNode, el('small', '', `${authors}${authors && item.publication_year ? ' · ' : ''}${item.publication_year || ''}`));
           list.append(entry);
         }
@@ -229,6 +233,7 @@
       if (authors.length) {
         const authorLine = el('p', 'publication-authors');
         authors.forEach((author, index) => {
+          author = canonicalAuthorName(author);
           if (index) authorLine.append(document.createTextNode(', '));
           const authorNode = el('span', /^(baoxuan\s+wang|wang,?\s+baoxuan)$/i.test(author.trim()) ? 'is-profile-author' : '', author);
           authorLine.append(authorNode);
@@ -319,7 +324,33 @@
   function renderService() {
     const editorial = document.getElementById('editorial-list');
     const reviewer = document.getElementById('reviewer-list');
-    editorial.replaceChildren(...service.editorial.map((name) => el('li', '', name)));
+    editorial.replaceChildren(...service.editorial.map((name) => {
+      const journal = service.editorialDetails?.[name] || journals[name] || {};
+      const item = el('li', 'editorial-journal');
+      const link = (label, cls) => {
+        const node = el(journal.homepage ? 'a' : 'span', cls, label);
+        if (journal.homepage) { node.href = journal.homepage; node.target = '_blank'; node.rel = 'noopener noreferrer'; }
+        return node;
+      };
+      if (journal.cover) {
+        const cover = link(null, 'editorial-cover');
+        cover.setAttribute('aria-label', t(`打开 ${name} 期刊主页`, `Open ${name}`));
+        const image = el('img'); image.src = journal.cover; image.alt = `${name} ${t('期刊封面', 'journal cover')}`;
+        image.loading = 'lazy'; cover.append(image); item.append(cover);
+      }
+      const body = el('div', 'editorial-copy');
+      body.append(link(`${name} ↗`, 'editorial-name'));
+      const badges = el('div', 'editorial-indexes');
+      for (const [key, zh, en] of [['cscd', 'CSCD', 'CSCD'], ['pku', '北大中文核心', 'PKU Core'], ['ei', 'EI', 'EI']]) {
+        const status = journal[key];
+        const badge = el(journal.source ? 'a' : 'span', `editorial-index${status === true ? ' is-indexed' : ''}`, `${t(zh, en)} · ${status === true ? t('收录', 'Indexed') : status === false ? t('不适用', 'N/A') : t('待核验', 'Unverified')}`);
+        if (journal.source) { badge.href = journal.source; badge.target = '_blank'; badge.rel = 'noopener noreferrer'; }
+        badges.append(badge);
+      }
+      body.append(badges); item.append(body); return item;
+    }));
+    const note = el('li', 'editorial-source-note', t('收录信息核验于 2026-11-14；点击标记查看依据。', 'Indexing checked on 2026-11-14; open a badge for its source.'));
+    editorial.append(note);
     reviewer.replaceChildren(...service.reviewers.map((name) => el('li', '', name)));
   }
 
@@ -466,7 +497,7 @@
         const firstName = String(first?.author?.display_name || '').toLowerCase().replace(/[^a-z]/g, '');
         return {
           ...work,
-          authors: authorships.map((entry) => entry.author?.display_name).filter(Boolean),
+          authors: authorships.map((entry) => canonicalAuthorName(entry.author?.display_name)).filter(Boolean),
           firstAuthor: first?.author?.orcid === orcid || firstName === 'baoxuanwang' || firstName === 'wangbaoxuan'
         };
       });
@@ -491,4 +522,3 @@
   document.getElementById('year').textContent = String(new Date().getFullYear());
   render(); loadOrcid().then(loadCitations);
 })();
-
