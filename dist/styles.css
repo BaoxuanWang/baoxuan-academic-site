@@ -220,6 +220,34 @@ a.portfolio-journal:hover{transform:translateY(-2px);box-shadow:0 7px 18px rgba(
 .portfolio-journal-copy small{display:block;color:#5a948d;font-size:9px;margin-top:5px}
 .portfolio-note{font-size:10px;color:#7d918e;line-height:1.7;margin:14px 0 0}
 .conference-section{background:#f4f5f0}
+.submissions-section{background:#fbfaf6;border-top:1px solid #e1e6de}
+.submission-controls{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px;padding:20px 0;border-top:1px solid #dce5dd;border-bottom:1px solid #dce5dd;margin-bottom:32px}
+.submission-controls label{display:flex;flex-direction:column;gap:8px;min-width:130px;font-size:11px;color:#5d7879}
+.submission-controls select{max-width:100%;border:1px solid #ccdcd4;background:#fff;color:#234d57;padding:10px 30px 10px 11px;font:inherit;font-size:12px;min-height:38px}
+#submission-count{margin-left:auto;font-size:11px;color:#768d89;padding-bottom:12px}
+.submission-subhead{display:flex;align-items:baseline;justify-content:space-between;gap:15px;margin:20px 0 10px}
+.submission-subhead h3{font:400 23px/1.5 Georgia,"Noto Serif SC","Songti SC",serif;color:#194550;margin:0}
+.submission-subhead>span{font-size:10px;color:#82938a}.submission-note{font-size:11px;line-height:1.9;color:#778c87;margin:0 0 20px}
+.submission-journal-grid,.submission-issue-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.submission-journal,.submission-issue{min-width:0;padding:24px;background:#fff;border:1px solid #dce5dd;display:flex;flex-direction:column}
+.submission-journal-head{display:flex;align-items:flex-start;gap:15px;margin-bottom:16px}.submission-journal-head>div{min-width:0;flex:1}
+.submission-cover{display:block;flex:none;width:46px;height:64px;border:1px solid #e2e9e3}.submission-cover img{display:block;width:100%;height:100%;object-fit:contain}
+.submission-priority{display:block;font-size:9px;letter-spacing:.06em;color:#518e84;line-height:1.7;margin-bottom:5px}
+.submission-journal h4,.submission-issue h4{font:400 18px/1.45 Georgia,"Times New Roman",serif;color:#244c57;margin:0 0 10px;overflow-wrap:anywhere}
+.submission-journal a:hover,.submission-issue a:hover{color:#25837f}
+.submission-metrics{display:flex;flex-wrap:wrap;gap:6px;font-size:9px;color:#587b77;line-height:1.6}.submission-metrics>a,.submission-metrics>span{padding:3px 6px;border:1px solid #e0e9e1;background:#f6f9f5}
+.submission-journal p,.submission-issue p{font-size:11px;line-height:1.9;color:#627e7e;margin:0 0 14px}.submission-journal p strong,.submission-issue p strong{font-weight:600;color:#3b6668}
+.submission-analysis{border-top:1px solid #e6ece6;margin-top:4px;padding-top:12px;font-size:11px;color:#507b77;line-height:1.8}
+.submission-analysis summary{cursor:pointer}.submission-analysis p{margin-top:10px}.submission-analysis>a{border-bottom:1px solid #a7c4b8}
+.submission-actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:auto;padding-top:20px;font-size:10px;line-height:1.7;color:#347d78}
+.submission-actions a{border-bottom:1px solid #b3ccc0}.submission-calls-head{margin-top:44px}
+.submission-past{display:flex;align-items:center;gap:6px;flex:none;font-size:11px;color:#6f8581;cursor:pointer}.submission-past input{accent-color:#2c7e74}
+.submission-issue{border-top:3px solid #92afa0}.submission-issue-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.submission-issue-top .submission-priority{max-width:70%}.submission-state{font-size:9px;line-height:1.7;padding:4px 7px;background:#f5efe2;color:#8a6b35;white-space:nowrap}.submission-state.is-open{background:#edf5ee;color:#378375}.submission-state.is-closed{background:#f0f1ee;color:#8c9791}
+.submission-issue p.submission-deadline{font:400 17px/1.5 Georgia,"Songti SC",serif;color:#226764;margin:18px 0 14px}.submission-issue p.submission-editors,.submission-issue p.submission-check{font-size:10px;color:#80938b}
+.submission-empty{grid-column:1/-1;padding:20px;border:1px dashed #d1dfd4;font-size:12px;line-height:1.8;color:#71857e}.submission-method{margin-top:22px}
+@media(max-width:1120px){.main-nav{gap:clamp(12px,1.6vw,22px)}.submission-journal,.submission-issue{padding:20px}}
+@media(max-width:620px){.submission-journal-grid,.submission-issue-grid{grid-template-columns:1fr}.submission-controls{gap:12px}.submission-controls label{min-width:0;flex:1}.submission-controls select{width:100%;font-size:11px;padding-right:10px}#submission-count{width:100%;margin-left:0;padding-bottom:0}.submission-subhead{align-items:flex-start}.submission-subhead>span{display:none}.submission-subhead h3{font-size:21px}.submission-journal h4,.submission-issue h4{font-size:18px}.submission-past{padding-top:6px}}
 .conference-heading p{font-size:12px;color:#708784;line-height:1.8;margin:11px 0 0;max-width:720px}
 .conference-update{display:flex;align-items:center;gap:9px;color:#527b78;font-size:11px;margin:-5px 0 18px}
 .conference-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}

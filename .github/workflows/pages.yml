@@ -35,6 +35,8 @@ jobs:
         run: node scripts/update-gold-history.mjs
       - name: Refresh conference dates and deadlines
         run: node scripts/update-conferences.mjs
+      - name: Refresh blade-research special issue calls
+        run: node scripts/update-submissions.mjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload site

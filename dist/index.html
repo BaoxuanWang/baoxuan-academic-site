@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#113847" />
     <meta name="description" content="Baoxuan Wang's research in offshore wind energy, composite structures and marine engineering. 海上风能、复合材料结构与海洋工程研究。" />
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./styles.css?v=20261114-2" />
+    <link rel="stylesheet" href="./styles.css?v=20261116-1" />
     <title>Baoxuan Wang | Research</title>
   </head>
   <body>
@@ -40,6 +40,7 @@
             <a href="#service" data-zh="学术服务" data-en="Service">学术服务</a>
             <a href="#markets" data-zh="产业观察" data-en="Markets">产业观察</a>
             <a href="#conferences" data-zh="会议" data-en="Conferences">会议</a>
+            <a href="#submissions" data-zh="投稿" data-en="Publishing">投稿</a>
           </nav>
           <button class="language-switch" id="language-switch" type="button" aria-label="Switch to English">EN <span aria-hidden="true">↗</span></button>
         </header>
@@ -211,6 +212,27 @@
             <p class="conference-method" data-zh="会议日期、地点和摘要截止时间每日从主办方官网核验；官网暂不可访问时保留最近一次有效数据。点击会议卡片查看官方通知，截止时间以主办方最终公告为准。" data-en="Dates, locations and abstract deadlines are checked daily against organizer websites. The latest valid record is retained when a source is temporarily unavailable. Open a card for the official notice; organizer announcements remain authoritative.">会议日期、地点和摘要截止时间每日从主办方官网核验；官网暂不可访问时保留最近一次有效数据。点击会议卡片查看官方通知，截止时间以主办方最终公告为准。</p>
           </section>
 
+          <section class="section submissions-section" id="submissions" aria-labelledby="submissions-title">
+            <div class="section-heading conference-heading">
+              <span class="section-index">07 /</span>
+              <div><h2 id="submissions-title" data-zh="叶片结构投稿指南" data-en="Publishing blade-structure research">叶片结构投稿指南</h2>
+                <p data-zh="围绕叶片结构与复材失效、浮式气弹耦合、载荷重构与测试，梳理 JCR Q1 / Q2 期刊与相关特刊。" data-en="JCR Q1/Q2 venues and special issues for blade structures, composite failure, floating-wind aeroelasticity, load reconstruction and testing.">围绕叶片结构与复材失效、浮式气弹耦合、载荷重构与测试，梳理 JCR Q1 / Q2 期刊与相关特刊。</p>
+              </div>
+            </div>
+            <div class="submission-controls">
+              <label><span data-zh="研究主题" data-en="Research topic">研究主题</span><select id="submission-topic"><option value="all" data-zh="全部方向" data-en="All topics">全部方向</option><option value="structures" data-zh="结构与复材失效" data-en="Structures & composite failure">结构与复材失效</option><option value="aeroelastic" data-zh="气弹耦合与海上风能" data-en="Aeroelasticity & offshore wind">气弹耦合与海上风能</option><option value="testing" data-zh="载荷重构与测试" data-en="Load reconstruction & testing">载荷重构与测试</option></select></label>
+              <label><span data-zh="JCR 分区" data-en="JCR quartile">JCR 分区</span><select id="submission-quartile"><option value="all" data-zh="Q1 + Q2" data-en="Q1 + Q2">Q1 + Q2</option><option value="1">Q1</option><option value="2">Q2</option></select></label>
+              <span id="submission-count" aria-live="polite"></span>
+            </div>
+            <div class="submission-subhead"><h3 data-zh="适合的期刊与投稿重点" data-en="Journal fit & manuscript strategy">适合的期刊与投稿重点</h3><span data-zh="按研究契合度整理" data-en="Curated by research fit">按研究契合度整理</span></div>
+            <p class="submission-note" data-zh="期刊卡片采用本站 JCR 2025 最优学科分区口径，指标可点击溯源；研究契合度是根据公开范围与现有工作作出的判断，不代表录用概率。" data-en="Journal cards use the site's JCR 2025 best-category quartile record, with linked metric sources. Fit is an assessment of published scope and current research, not an acceptance prediction.">期刊卡片采用本站 JCR 2025 最优学科分区口径，指标可点击溯源；研究契合度是根据公开范围与现有工作作出的判断，不代表录用概率。</p>
+            <div class="submission-journal-grid" id="submission-journals" aria-live="polite"></div>
+            <div class="submission-subhead submission-calls-head"><h3 data-zh="在征特刊与重点跟踪" data-en="Open special issues & tracked calls">在征特刊与重点跟踪</h3><label class="submission-past"><input type="checkbox" id="submission-show-past" /><span data-zh="含已截止" data-en="Include closed">含已截止</span></label></div>
+            <p class="submission-note" id="submission-updated"></p>
+            <div class="submission-issue-grid" id="submission-issues" aria-live="polite"></div>
+            <p class="submission-note submission-method" data-zh="特刊分区采用其期刊官网当前展示并注明学科；已追踪的征稿页每日检查截止日与状态，已过截止日自动移出默认列表。官网暂不可访问时保留最近有效记录并标明。投稿前请核对官网的费用、开放时间和最终截止日。" data-en="Special-issue quartiles follow the journal's current official display with its category. Tracked calls are checked daily; past deadlines disappear from the default list. Unavailable sources retain a clearly labelled last valid record. Confirm fees, opening dates and final deadlines on the official page before submission.">特刊分区采用其期刊官网当前展示并注明学科；已追踪的征稿页每日检查截止日与状态，已过截止日自动移出默认列表。官网暂不可访问时保留最近有效记录并标明。投稿前请核对官网的费用、开放时间和最终截止日。</p>
+          </section>
+
           <section class="profile-section" id="profiles" aria-labelledby="profiles-title">
             <div>
               <span class="profile-eyebrow" data-zh="继续了解" data-en="CONNECT WITH THE RESEARCH">继续了解</span>
@@ -234,7 +256,9 @@
     <script src="./cnki.js"></script>
     <script src="./service.js?v=20261114-1"></script>
     <script src="./conferences.js?v=20261111-1"></script>
-    <script src="./script.js?v=20261114-1"></script>
+    <script src="./script.js?v=20261116-1"></script>
+    <script src="./submissions.js?v=20261116-1"></script>
+    <script src="./submissions-ui.js?v=20261116-1"></script>
     <script src="./gold-history.js"></script>
     <script src="./stocks.js"></script>
   </body>

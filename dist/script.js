@@ -434,6 +434,7 @@
     document.getElementById('citations-external').textContent = document.getElementById('citations-external').dataset.value ? number(document.getElementById('citations-external').dataset.value) : '—';
     renderScholar();
     renderWorks(); renderConferences(); renderService(); renderReviewerMetrics(); renderStatus();
+    document.dispatchEvent(new CustomEvent('site:language', { detail: { language } }));
   }
 
   async function getJson(url) {
