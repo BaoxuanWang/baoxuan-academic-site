@@ -1,6 +1,8 @@
 (function () {
   const endpoint = 'https://baoxuanwang.goatcounter.com';
   const canonicalPath = '/baoxuan-academic-site/';
+  const counterUrl = `${endpoint}/counter/${encodeURIComponent(canonicalPath)}.json`;
+  const trackingStartedOn = '2026-11-18';
   const total = document.getElementById('visitor-total');
   const today = document.getElementById('visitor-today');
   const status = document.getElementById('visitor-status');
@@ -37,18 +39,22 @@
   function setCollection(next) { collection = next; render(); }
   async function readCount(url) {
     const response = await fetch(url, { credentials: 'omit', referrerPolicy: 'no-referrer', signal: AbortSignal.timeout(10000) });
-    if (!response.ok) { const error = new Error(`HTTP ${response.status}`); error.status = response.status; throw error; }
+    if (!response.ok && response.status !== 404) { const error = new Error(`HTTP ${response.status}`); error.status = response.status; throw error; }
     const data = await response.json();
     const raw = String(data.count ?? '').replace(/[,\s]/g, '');
     if (!/^\d+$/.test(raw) || !Number.isSafeInteger(Number(raw))) throw new Error('Invalid public count');
+    // An empty path/date range returns 404 with a valid zero-count JSON body.
+    if (response.status === 404 && Number(raw) !== 0) throw new Error('Invalid empty count');
     return Number(raw);
   }
   async function refresh() {
     const day = utcDay(); lastRead = Date.now(); lastDay = day;
+    const dailyCount = readCount(`${counterUrl}?start=${day}`);
+    const cumulativeCount = day === trackingStartedOn ? dailyCount : readCount(`${counterUrl}?start=${trackingStartedOn}`);
     const results = await Promise.allSettled([
       // The public counter uses UTC dates; omit end to include all of today.
-      readCount(`${endpoint}/counter/TOTAL.json?start=${day}`),
-      readCount(`${endpoint}/counter/TOTAL.json`)
+      dailyCount,
+      cumulativeCount
     ]);
     ['today', 'total'].forEach((key, index) => { values[key] = results[index].status === 'fulfilled' ? results[index].value : null; });
     state = results.some(r => r.status === 'rejected' && r.reason.status === 403) ? 'disabled'
