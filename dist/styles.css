@@ -220,6 +220,29 @@ a.portfolio-journal:hover{transform:translateY(-2px);box-shadow:0 7px 18px rgba(
 .portfolio-journal-copy small{display:block;color:#5a948d;font-size:9px;margin-top:5px}
 .portfolio-note{font-size:10px;color:#7d918e;line-height:1.7;margin:14px 0 0}
 .conference-section{background:#f4f5f0}
+.funding-section{background:#f4f5f0;border-top:1px solid #dfe5dc}
+.funding-summary{font-size:12px;line-height:1.8;color:#42796e;margin:0 0 18px}
+.funding-principles{display:grid;grid-template-columns:1fr 1fr;border:1px solid #dce4d8;background:#fbfcf8;margin-bottom:24px}
+.funding-principles p{font-size:11px;line-height:1.9;color:#657d72;padding:18px 20px;margin:0}.funding-principles p+p{border-left:1px solid #dce4d8}
+.funding-controls{align-items:flex-end}.funding-search-label{flex:1;min-width:160px!important}.funding-controls input{height:38px;min-width:0;border:1px solid #ccdcd4;background:#fff;padding:9px 12px;color:#234d57;font:inherit;font-size:12px}
+#funding-count{font-size:10px;color:#7e9288;padding-bottom:12px;white-space:nowrap}
+.funding-grid,.funding-rule-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.funding-card,.funding-rule{min-width:0;background:#fff;border:1px solid #dce5db;padding:24px;display:flex;flex-direction:column}
+.funding-card-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:12px}
+.funding-category,.funding-rule-type{font-size:9px;color:#4d8b7b;line-height:1.7;letter-spacing:.08em}
+.funding-state{font-size:9px;line-height:1.6;padding:4px 7px;background:#f1f3ed;color:#7e8e7e;text-align:right}.funding-state.is-open{background:#eaf4eb;color:#317861}.funding-state.is-conditional{background:#edf2f4;color:#587583}
+.funding-card h3{font:400 20px/1.5 Georgia,"Noto Serif SC","Songti SC",serif;color:#214c52;margin:0 0 7px;overflow-wrap:anywhere}.funding-card h3 a:hover{color:#278179}
+.funding-card p,.funding-rule p{font-size:11px;line-height:1.95;color:#657d75;margin:0 0 14px}.funding-card p strong{font-weight:600;color:#3c6a60}
+.funding-card p.funding-version{font-size:10px;color:#829185;margin-bottom:14px}.funding-type{align-self:flex-start;padding:4px 7px;border:1px solid #e0e8df;font-size:9px;line-height:1.7;color:#6d856e;background:#f7faf4}
+.funding-card p.funding-amount{font:400 17px/1.65 Georgia,"Songti SC",serif;color:#316f60;margin:12px 0 16px}
+.funding-dates{padding:12px 0;border-top:1px solid #e5eae2;border-bottom:1px solid #e5eae2;margin:0 0 11px;font-size:10px;line-height:1.8}
+.funding-dates>div{display:grid;grid-template-columns:75px minmax(0,1fr);gap:8px;margin:3px 0}.funding-dates dt{color:#8a998a}.funding-dates dd{margin:0;color:#4c7465}
+.funding-card p.funding-window-note{font-size:10px;color:#869582}.funding-card .submission-analysis{margin-bottom:5px}.funding-platform{padding:17px 20px;background:#fafbf5;border-left:2px solid #9eae82;margin-top:20px}
+.funding-rule h4{font:400 17px/1.6 Georgia,"Songti SC",serif;color:#365e55;margin:7px 0 12px}.funding-rule .submission-actions{padding-top:6px}
+.funding-updates{padding:0;list-style:none;margin:0 0 20px}.funding-updates li{padding:15px 18px;border:1px solid #dce5db;background:#fcfdf9;color:#4a7165;font-size:12px;line-height:1.8;margin-bottom:8px}.funding-updates li span{display:block;font-size:10px;color:#8b9785;margin-top:5px}
+.funding-monitor-details{font-size:11px;line-height:1.9;color:#597b6d}.funding-monitor-details summary{cursor:pointer}.funding-monitor-details ul{list-style:none;padding:0}.funding-monitor-details li{padding:7px 0;border-top:1px solid #dfe6dc}.funding-monitor-details li span{margin-left:12px;color:#8c9989;font-size:10px}
+@media(min-width:841px){.main-nav{gap:clamp(10px,1.6vw,24px)}}
+@media(max-width:620px){.funding-grid,.funding-rule-grid,.funding-principles{grid-template-columns:1fr}.funding-principles p+p{border-left:0;border-top:1px solid #dce4d8}.funding-card,.funding-rule{padding:20px}.funding-controls{gap:12px}.funding-controls label{flex:1;min-width:calc(50% - 12px)}.funding-controls .funding-search-label{min-width:100%!important}#funding-count{padding-bottom:0}.funding-card h3{font-size:20px}.funding-monitor-details li span{display:block;margin:3px 0 0}}
 .submissions-section{background:#fbfaf6;border-top:1px solid #e1e6de}
 .submission-controls{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px;padding:20px 0;border-top:1px solid #dce5dd;border-bottom:1px solid #dce5dd;margin-bottom:32px}
 .submission-controls label{display:flex;flex-direction:column;gap:8px;min-width:130px;font-size:11px;color:#5d7879}

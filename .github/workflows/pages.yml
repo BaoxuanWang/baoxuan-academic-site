@@ -37,6 +37,8 @@ jobs:
         run: node scripts/update-conferences.mjs
       - name: Refresh blade-research special issue calls
         run: node scripts/update-submissions.mjs
+      - name: Monitor public research-funding and talent-policy sources
+        run: node scripts/update-funding.mjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload site

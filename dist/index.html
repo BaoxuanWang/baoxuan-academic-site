@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#113847" />
     <meta name="description" content="Baoxuan Wang's research in offshore wind energy, composite structures and marine engineering. 海上风能、复合材料结构与海洋工程研究。" />
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./styles.css?v=20261116-1" />
+    <link rel="stylesheet" href="./styles.css?v=20261118-1" />
     <title>Baoxuan Wang | Research</title>
   </head>
   <body>
@@ -41,6 +41,7 @@
             <a href="#markets" data-zh="产业观察" data-en="Markets">产业观察</a>
             <a href="#conferences" data-zh="会议" data-en="Conferences">会议</a>
             <a href="#submissions" data-zh="投稿" data-en="Publishing">投稿</a>
+            <a href="#funding" data-zh="基金" data-en="Funding">基金</a>
           </nav>
           <button class="language-switch" id="language-switch" type="button" aria-label="Switch to English">EN <span aria-hidden="true">↗</span></button>
         </header>
@@ -233,6 +234,22 @@
             <p class="submission-note submission-method" data-zh="特刊分区采用其期刊官网当前展示并注明学科；已追踪的征稿页每日检查截止日与状态，已过截止日自动移出默认列表。官网暂不可访问时保留最近有效记录并标明。投稿前请核对官网的费用、开放时间和最终截止日。" data-en="Special-issue quartiles follow the journal's current official display with its category. Tracked calls are checked daily; past deadlines disappear from the default list. Unavailable sources retain a clearly labelled last valid record. Confirm fees, opening dates and final deadlines on the official page before submission.">特刊分区采用其期刊官网当前展示并注明学科；已追踪的征稿页每日检查截止日与状态，已过截止日自动移出默认列表。官网暂不可访问时保留最近有效记录并标明。投稿前请核对官网的费用、开放时间和最终截止日。</p>
           </section>
 
+          <section class="section funding-section" id="funding" aria-labelledby="funding-title">
+            <div class="section-heading conference-heading"><span class="section-index">08 /</span><div><h2 id="funding-title" data-zh="科研资助与人才政策" data-en="Research funding & talent support">科研资助与人才政策</h2><p data-zh="面向博士后与青年科研人员，梳理国家、浙江、宁波及相关实验室的公开申报通知与支持政策。" data-en="Public calls and support schemes for postdocs and early-career researchers: national, Zhejiang, Ningbo and relevant laboratory open funds.">面向博士后与青年科研人员，梳理国家、浙江、宁波及相关实验室的公开申报通知与支持政策。</p></div></div>
+            <p class="funding-summary" id="funding-summary"></p>
+            <div class="funding-principles"><p data-zh="先看资格，再看窗口：联招与自主招收、在职与非在职、实际依托法人及项目执行期，可能改变申报资格。" data-en="Check eligibility before dates: recruitment route, employment status, legal host and project-term coverage can change eligibility.">先看资格，再看窗口：联招与自主招收、在职与非在职、实际依托法人及项目执行期，可能改变申报资格。</p><p data-zh="科研经费、个人补贴与拨给单位的经费分开列示；不把各项金额简单相加。下一轮未公布时，保留上一轮日期并明确标注。" data-en="Research grants, personal benefits and host payments are shown separately, not added together. Unannounced next rounds retain clearly labelled historical dates.">科研经费、个人补贴与拨给单位的经费分开列示；不把各项金额简单相加。下一轮未公布时，保留上一轮日期并明确标注。</p></div>
+            <div class="submission-controls funding-controls"><label><span data-zh="项目范围" data-en="Scheme category">项目范围</span><select id="funding-category"><option value="all" data-zh="全部政策" data-en="All schemes">全部政策</option><option value="postdoc" data-zh="国家博士后" data-en="National postdoc">国家博士后</option><option value="nsfc">NSFC</option><option value="zhejiang" data-zh="浙江省" data-en="Zhejiang">浙江省</option><option value="ningbo" data-zh="宁波市" data-en="Ningbo">宁波市</option><option value="open" data-zh="开放基金" data-en="Open funds">开放基金</option></select></label><label><span data-zh="窗口状态" data-en="Window status">窗口状态</span><select id="funding-status"><option value="all" data-zh="全部状态" data-en="All statuses">全部状态</option><option value="open" data-zh="正在申报" data-en="Open now">正在申报</option><option value="upcoming" data-zh="尚未开始" data-en="Upcoming">尚未开始</option><option value="waiting" data-zh="待下一轮通知" data-en="Awaiting next call">待下一轮通知</option><option value="conditional" data-zh="达到条件后办理" data-en="Milestone-based">达到条件后办理</option><option value="closed" data-zh="已截止" data-en="Closed">已截止</option></select></label><label class="funding-search-label"><span data-zh="搜索项目" data-en="Search schemes">搜索项目</span><input id="funding-search" type="search" placeholder="基金、科研方向或政策关键词" autocomplete="off" /></label><span id="funding-count" aria-live="polite"></span></div>
+            <div class="funding-grid" id="funding-projects" aria-live="polite"></div>
+            <p class="submission-note funding-platform" id="funding-platform-window"></p>
+            <div class="submission-subhead submission-calls-head"><h3 data-zh="互斥、补差与限项" data-en="Exclusions, top-ups & project limits">互斥、补差与限项</h3></div>
+            <div class="funding-rule-grid" id="funding-conflicts"></div>
+            <div class="submission-subhead submission-calls-head"><h3 data-zh="政策来源监测" data-en="Policy-source monitoring">政策来源监测</h3></div>
+            <p class="submission-note" id="funding-updated"></p>
+            <ul class="funding-updates" id="funding-updates"></ul>
+            <details class="funding-monitor-details"><summary data-zh="查看来源与本次读取状态" data-en="Sources and current check status">查看来源与本次读取状态</summary><ul id="funding-monitors"></ul></details>
+            <p class="submission-note submission-method" data-zh="每日检查已配置的官方来源；新通知或内容变化进入待复核列表，不自动把新规则当作已确认资格。项目口径与来源监测时间分别显示，官网暂不可访问时保留最近已核验信息。申报前以当年指南、实际依托单位及经办部门审核为准。" data-en="Configured official sources are checked daily. New notices or content changes are queued for review, not automatically treated as verified eligibility. Rule-review and source-check dates are distinct; reviewed information is retained when sources are unavailable. Confirm current guidance and host/agency approval before applying.">每日检查已配置的官方来源；新通知或内容变化进入待复核列表，不自动把新规则当作已确认资格。项目口径与来源监测时间分别显示，官网暂不可访问时保留最近已核验信息。申报前以当年指南、实际依托单位及经办部门审核为准。</p>
+          </section>
+
           <section class="profile-section" id="profiles" aria-labelledby="profiles-title">
             <div>
               <span class="profile-eyebrow" data-zh="继续了解" data-en="CONNECT WITH THE RESEARCH">继续了解</span>
@@ -259,6 +276,8 @@
     <script src="./script.js?v=20261116-1"></script>
     <script src="./submissions.js?v=20261116-1"></script>
     <script src="./submissions-ui.js?v=20261116-1"></script>
+    <script src="./funding-data.js?v=20261118-1"></script>
+    <script src="./funding-ui.js?v=20261118-1"></script>
     <script src="./gold-history.js"></script>
     <script src="./stocks.js"></script>
   </body>
