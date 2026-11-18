@@ -6,7 +6,7 @@
   const status = document.getElementById('visitor-status');
   if (!total || !today || !status) return;
   let language = document.documentElement.lang.startsWith('zh') ? 'zh' : 'en';
-  let values = { today: null, total: null }, state = 'loading', lastRead = 0, lastDay = '';
+  let values = { today: null, total: null }, state = 'loading', lastRead = 0, lastDay = '', collectionFailed = false;
   const t = (zh, en) => language === 'zh' ? zh : en;
   const utcDay = () => new Date().toISOString().slice(0, 10);
   function render() {
@@ -15,6 +15,7 @@
       : state === 'disabled' ? t('公开计数尚未启用；访问采集独立运行。', 'Public counters are not enabled; collection runs independently.')
       : state === 'error' ? t('计数暂不可用，请稍后再试。', 'Counts temporarily unavailable; please try later.')
       : t('今日按 UTC（北京时间 08:00 换日）· 公开计数可能延迟至多 4 小时', 'Today uses UTC · Public counts may be delayed by up to 4 hours');
+    if (collectionFailed) status.textContent += t(' · 访问记录脚本未能加载，请检查浏览器拦截设置。', ' · Visit tracking could not load; please check browser blocking settings.');
   }
   async function readCount(url) {
     const response = await fetch(url, { credentials: 'omit', referrerPolicy: 'no-referrer', signal: AbortSignal.timeout(10000) });
@@ -42,9 +43,10 @@
     const optedOut = navigator.doNotTrack === '1' || navigator.globalPrivacyControl === true;
     if (!production || excluded || optedOut) return;
     const script = document.createElement('script');
-    script.src = 'https://gc.zgo.at/count.js'; script.async = true;
+    script.src = './assets/vendor/goatcounter-count.js?v=478f026'; script.async = true;
     script.dataset.goatcounter = `${endpoint}/count`;
-    script.dataset.goatcounterSettings = JSON.stringify({ no_onload: true });
+    script.dataset.goatcounterSettings = JSON.stringify({ no_onload: true, no_events: true });
+    script.addEventListener('error', () => { collectionFailed = true; render(); }, { once: true });
     script.addEventListener('load', () => {
       const tracker = window.goatcounter;
       if (!tracker?.count || typeof tracker.get_data !== 'function' || tracker.filter?.()) return;
