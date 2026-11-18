@@ -47,7 +47,13 @@
     script.dataset.goatcounterSettings = JSON.stringify({ no_onload: true });
     script.addEventListener('load', () => {
       const tracker = window.goatcounter;
-      if (!tracker?.count || tracker.filter?.()) return;
+      if (!tracker?.count || typeof tracker.get_data !== 'function' || tracker.filter?.()) return;
+      const originalData = tracker.get_data.bind(tracker);
+      tracker.get_data = vars => {
+        const data = originalData(vars);
+        // Only permit coarse, non-form fields; the vendor also adds queries.
+        return { p: canonicalPath, t: 'Baoxuan Wang | Research', r: vars?.referrer || '', s: data.s, b: data.b, ns: true };
+      };
       let referral = '';
       try { referral = document.referrer ? new URL(document.referrer).origin : ''; } catch {}
       // One count per page load; no filter values, queries, fragments or form data.
