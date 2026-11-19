@@ -316,5 +316,470 @@ window.BAOXUAN_SUBMISSIONS={
       "lastAttempt": "2026-11-16T04:13:50.121Z",
       "lastError": "HTTP 403"
     }
+  ],
+  "chineseJournals": [
+    {
+      "name": "复合材料学报",
+      "nameEn": "Acta Materiae Compositae Sinica",
+      "topics": [
+        "structures",
+        "testing"
+      ],
+      "priorityZh": "复材结构与失效优先",
+      "priorityEn": "Composite structures and failure",
+      "homepage": "https://fhclxb.buaa.edu.cn/",
+      "scopeUrl": "https://fhclxb.buaa.edu.cn/zuozhexuzhi",
+      "scopeZh": "面向复合材料的力学性能、结构设计、制备与服役，适合纤维增强复材、层合板、夹芯和胶接结构。",
+      "scopeEn": "Composite materials, structural design and service behaviour, including fibre-reinforced laminates, sandwich construction and bonded structures.",
+      "fitZh": "优先考虑梁帽与腹板、超厚 CFRP 压缩、分层、胶接界面、制造缺陷及渐进损伤研究。",
+      "fitEn": "A priority for spar caps and webs, thick-CFRP compression, delamination, bonded interfaces, manufacturing defects and progressive damage.",
+      "adviceZh": "将铺层或缺陷参数变化凝练为材料—结构失效机理；补充材料标定、缺陷表征及独立试验验证。",
+      "adviceEn": "Turn layup or defect variations into material–structure failure mechanisms, supported by calibration, defect characterisation and independent experiments.",
+      "cover": "./assets/journals/cn-composites.jpg",
+      "checkedDate": "2026-11-18",
+      "indexing": [
+        {
+          "code": "ei",
+          "labelZh": "EI · 官网列示",
+          "labelEn": "EI · Official listing",
+          "source": "https://ev.buaa.edu.cn/Research/Academic_Journals.htm"
+        },
+        {
+          "code": "cscd",
+          "labelZh": "CSCD 2025–2026 · 核心库",
+          "labelEn": "CSCD 2025–2026 · Core",
+          "source": "http://sciencechina.cn/scichina2/style/sourcelist25_26.pdf"
+        },
+        {
+          "code": "core",
+          "labelZh": "北大核心 2023",
+          "labelEn": "Chinese core 2023",
+          "source": "https://kyc.webs.nbpt.edu.cn/_upload/article/files/63/28/89215fe74706a7280e2f84ef765e/31eb9ee4-8479-4eb0-9d12-c15dd2879955.pdf"
+        }
+      ]
+    },
+    {
+      "name": "工程力学",
+      "nameEn": "Engineering Mechanics",
+      "topics": [
+        "structures",
+        "testing"
+      ],
+      "priorityZh": "叶片承载与工程力学",
+      "priorityEn": "Blade strength and engineering mechanics",
+      "homepage": "https://engineeringmechanics.cn/",
+      "scopeUrl": "https://pubs.cstam.org.cn/em",
+      "scopeZh": "覆盖工程结构的静动力学、稳定性、强度、损伤与相关计算和试验方法。",
+      "scopeEn": "Statics, dynamics, stability, strength and damage of engineering structures, with computational and experimental methods.",
+      "fitZh": "适合叶片非线性屈曲、极限承载、疲劳、壳—实体耦合计算和损伤识别。",
+      "fitEn": "Suitable for nonlinear blade buckling, ultimate strength, fatigue, shell–solid coupling and damage identification.",
+      "adviceZh": "突出可推广的力学方法或承载机制，给出收敛分析、基准对照和工程验证，避免仅展示有限元参数扫描。",
+      "adviceEn": "Establish transferable mechanics or load-carrying mechanisms, with convergence, benchmarks and engineering validation beyond an FE parameter sweep.",
+      "cover": "./assets/journals/cn-engineering-mechanics.jpg",
+      "checkedDate": "2026-11-18",
+      "indexing": [
+        {
+          "code": "ei",
+          "labelZh": "EI · 官网列示",
+          "labelEn": "EI · Official listing",
+          "source": "https://pubs.cstam.org.cn/em"
+        },
+        {
+          "code": "cscd",
+          "labelZh": "CSCD 2025–2026 · 核心库",
+          "labelEn": "CSCD 2025–2026 · Core",
+          "source": "http://sciencechina.cn/scichina2/style/sourcelist25_26.pdf"
+        },
+        {
+          "code": "core",
+          "labelZh": "北大核心 2023",
+          "labelEn": "Chinese core 2023",
+          "source": "https://kyc.webs.nbpt.edu.cn/_upload/article/files/63/28/89215fe74706a7280e2f84ef765e/31eb9ee4-8479-4eb0-9d12-c15dd2879955.pdf"
+        }
+      ]
+    },
+    {
+      "name": "机械工程学报",
+      "nameEn": "Journal of Mechanical Engineering",
+      "topics": [
+        "structures",
+        "testing"
+      ],
+      "priorityZh": "结构方法、可靠性与试验",
+      "priorityEn": "Structural methods, reliability and testing",
+      "homepage": "http://www.cjmenet.com.cn/CN/0577-6686/home.shtml",
+      "scopeUrl": "http://www.cjmenet.com.cn/CN/column/column346.shtml",
+      "scopeZh": "涵盖机械动力学、材料、仪器与测试、可靠性，以及可再生能源和深海装备相关技术。",
+      "scopeEn": "Mechanical dynamics, materials, instrumentation, testing and reliability, including renewable-energy and deep-sea equipment.",
+      "fitZh": "适合叶片结构设计、疲劳可靠性、载荷识别、全尺寸试验，以及有明确方法创新的多尺度建模。",
+      "fitEn": "A match for blade design, fatigue reliability, load identification, full-scale testing and multiscale models with a clear methodological advance.",
+      "adviceZh": "围绕方法的普适性与工程价值组织论文，解释力学机制，并以独立基准或试验支撑结论。",
+      "adviceEn": "Make methodological generality and engineering value explicit, explain the mechanics and support conclusions with independent benchmarks or experiments.",
+      "cover": "./assets/journals/cn-mechanical-engineering.jpg",
+      "checkedDate": "2026-11-18",
+      "indexing": [
+        {
+          "code": "ei",
+          "labelZh": "EI · 官网列示",
+          "labelEn": "EI · Official listing",
+          "source": "http://www.cjmenet.com.cn/CN/column/column342.shtml"
+        },
+        {
+          "code": "cscd",
+          "labelZh": "CSCD 2025–2026 · 核心库",
+          "labelEn": "CSCD 2025–2026 · Core",
+          "source": "http://sciencechina.cn/scichina2/style/sourcelist25_26.pdf"
+        },
+        {
+          "code": "core",
+          "labelZh": "北大核心 2023",
+          "labelEn": "Chinese core 2023",
+          "source": "https://kyc.webs.nbpt.edu.cn/_upload/article/files/63/28/89215fe74706a7280e2f84ef765e/31eb9ee4-8479-4eb0-9d12-c15dd2879955.pdf"
+        }
+      ]
+    },
+    {
+      "name": "太阳能学报",
+      "nameEn": "Acta Energiae Solaris Sinica",
+      "topics": [
+        "aeroelastic",
+        "structures"
+      ],
+      "priorityZh": "风能应用与叶片设计",
+      "priorityEn": "Wind-energy applications and blade design",
+      "homepage": "https://www.tynxb.org.cn/CN/home",
+      "scopeUrl": "https://www.tynxb.org.cn/CN/column/column3.shtml",
+      "scopeZh": "涵盖太阳能、风能等新能源的基础与应用研究，可关注风机叶片设计、载荷与系统性能。",
+      "scopeEn": "Fundamental and applied renewable-energy research, including wind-turbine blade design, loads and system performance.",
+      "fitZh": "适合叶片气弹设计、风机载荷、海上耦合响应，以及结构优化对发电性能和安全性的影响。",
+      "fitEn": "Suitable for blade aeroelastic design, turbine loads, offshore coupled response and the effects of structural optimisation on energy performance and safety.",
+      "adviceZh": "突出风能应用价值、设计或载荷改进，说明工况代表性，并给出模型或试验验证。",
+      "adviceEn": "Quantify the wind-energy benefit, design or load improvements and the representativeness of operating conditions, with model or experimental validation.",
+      "cover": "./assets/journals/cn-solar-energy.jpg",
+      "checkedDate": "2026-11-18",
+      "indexing": [
+        {
+          "code": "ei",
+          "labelZh": "EI · 官网列示",
+          "labelEn": "EI · Official listing",
+          "source": "https://www.tynxb.org.cn/CN/home"
+        },
+        {
+          "code": "cscd",
+          "labelZh": "CSCD 2025–2026 · 扩展库",
+          "labelEn": "CSCD 2025–2026 · Extended",
+          "source": "http://sciencechina.cn/scichina2/style/sourcelist25_26.pdf"
+        },
+        {
+          "code": "core",
+          "labelZh": "北大核心 2023",
+          "labelEn": "Chinese core 2023",
+          "source": "https://kyc.webs.nbpt.edu.cn/_upload/article/files/63/28/89215fe74706a7280e2f84ef765e/31eb9ee4-8479-4eb0-9d12-c15dd2879955.pdf"
+        }
+      ]
+    },
+    {
+      "name": "振动工程学报",
+      "nameEn": "Journal of Vibration Engineering",
+      "topics": [
+        "aeroelastic",
+        "testing",
+        "structures"
+      ],
+      "priorityZh": "耦合动力学与模态识别",
+      "priorityEn": "Coupled dynamics and modal identification",
+      "homepage": "https://zdgcxb.csve.org.cn/",
+      "scopeUrl": "https://zdgcxb.csve.org.cn/submission-guidelines",
+      "scopeZh": "面向振动工程、结构动力学、振动测试与控制及相关理论和应用。",
+      "scopeEn": "Vibration engineering, structural dynamics, vibration testing and control, with theoretical and applied contributions.",
+      "fitZh": "适合叶片弯扭耦合、非线性振动、气弹稳定性、模态识别、流固耦合和动态试验。",
+      "fitEn": "A fit for blade bend–twist coupling, nonlinear vibration, aeroelastic stability, modal identification, fluid–structure interaction and dynamic tests.",
+      "adviceZh": "将主要贡献落在动力学机理或方法创新，交代边界条件、参数辨识与独立验证，避免只有响应曲线对比。",
+      "adviceEn": "Centre the contribution on dynamics or a methodological advance, with clear boundary conditions, parameter identification and independent validation.",
+      "cover": "./assets/journals/cn-vibration-engineering.jpg",
+      "checkedDate": "2026-11-18",
+      "indexing": [
+        {
+          "code": "ei",
+          "labelZh": "EI · 官网列示",
+          "labelEn": "EI · Official listing",
+          "source": "https://zdxb.nuaa.edu.cn/zdgcxb/site/menu/20101207210339001"
+        },
+        {
+          "code": "cscd",
+          "labelZh": "CSCD 2025–2026 · 核心库",
+          "labelEn": "CSCD 2025–2026 · Core",
+          "source": "http://sciencechina.cn/scichina2/style/sourcelist25_26.pdf"
+        },
+        {
+          "code": "core",
+          "labelZh": "北大核心 2023",
+          "labelEn": "Chinese core 2023",
+          "source": "https://kyc.webs.nbpt.edu.cn/_upload/article/files/63/28/89215fe74706a7280e2f84ef765e/31eb9ee4-8479-4eb0-9d12-c15dd2879955.pdf"
+        }
+      ]
+    },
+    {
+      "name": "振动与冲击",
+      "nameEn": "Journal of Vibration and Shock",
+      "topics": [
+        "structures",
+        "testing"
+      ],
+      "priorityZh": "结构响应、测试与监测",
+      "priorityEn": "Structural response, tests and monitoring",
+      "homepage": "https://jvs.sjtu.edu.cn/CN/home",
+      "scopeUrl": "https://jvs.sjtu.edu.cn/CN/column/column3.shtml",
+      "scopeZh": "覆盖振动、冲击、动力分析与控制，以及工程测试、信号分析和状态监测。",
+      "scopeEn": "Vibration, impact, dynamic analysis and control, engineering tests, signal analysis and condition monitoring.",
+      "fitZh": "适合叶片动力响应、模态试验、载荷识别、冲击损伤、振动控制和结构健康监测。",
+      "fitEn": "Suitable for blade dynamic response, modal tests, load identification, impact damage, vibration control and structural health monitoring.",
+      "adviceZh": "明确工程问题与算法或试验方法的改进，量化噪声、误差和参数敏感性，并提供试验对照。",
+      "adviceEn": "Define the engineering problem and advance in algorithms or testing; quantify noise, errors and parameter sensitivity with experimental comparisons.",
+      "cover": "./assets/journals/cn-vibration-shock.jpg",
+      "checkedDate": "2026-11-18",
+      "indexing": [
+        {
+          "code": "ei",
+          "labelZh": "EI · 官网列示",
+          "labelEn": "EI · Official listing",
+          "source": "https://me.sjtu.edu.cn/qkml/77643.html"
+        },
+        {
+          "code": "cscd",
+          "labelZh": "CSCD 2025–2026 · 核心库",
+          "labelEn": "CSCD 2025–2026 · Core",
+          "source": "http://sciencechina.cn/scichina2/style/sourcelist25_26.pdf"
+        },
+        {
+          "code": "core",
+          "labelZh": "北大核心 2023",
+          "labelEn": "Chinese core 2023",
+          "source": "https://kyc.webs.nbpt.edu.cn/_upload/article/files/63/28/89215fe74706a7280e2f84ef765e/31eb9ee4-8479-4eb0-9d12-c15dd2879955.pdf"
+        }
+      ]
+    },
+    {
+      "name": "船舶力学",
+      "nameEn": "Journal of Ship Mechanics",
+      "topics": [
+        "structures",
+        "aeroelastic",
+        "testing"
+      ],
+      "priorityZh": "船海结构与耦合力学",
+      "priorityEn": "Marine structures and coupled mechanics",
+      "homepage": "https://cblx.cbpt.cnki.net/portal/journal/portal/client/index",
+      "scopeUrl": "https://cblx.cbpt.cnki.net/portal/journal/portal/client/news/cblx_db922688-adf9-430b-94cd-def1f4845b4d",
+      "scopeZh": "覆盖船舶与海洋工程中的流体力学、结构力学及流体与结构声学，可接收中英文论文。",
+      "scopeEn": "Fluid mechanics, structural mechanics and fluid/structural acoustics for ship and marine engineering; Chinese and English papers are accepted.",
+      "fitZh": "适合海上叶片气动—结构耦合、复合壳体承载、疲劳与振动，以及具有船海工况背景的力学分析。",
+      "fitEn": "A match for offshore blade aero–structural coupling, composite-shell strength, fatigue and vibration with a clear marine operating context.",
+      "adviceZh": "说明船海工况对结构响应与失效机制的影响，补充试验或独立验证；纯干态材料参数研究需凝练工程关联。",
+      "adviceEn": "Show how marine operating conditions affect response and failure mechanisms, supported by experiments or independent validation.",
+      "cover": "./assets/journals/cn-ship-mechanics.jpg",
+      "checkedDate": "2026-11-18",
+      "indexing": [
+        {
+          "code": "ei",
+          "labelZh": "EI · 官网列示",
+          "labelEn": "EI · Official listing",
+          "source": "https://cblx.cbpt.cnki.net/portal/journal/portal/client/news/cblx_db922688-adf9-430b-94cd-def1f4845b4d"
+        },
+        {
+          "code": "cscd",
+          "labelZh": "CSCD 2025–2026 · 扩展库",
+          "labelEn": "CSCD 2025–2026 · Extended",
+          "source": "http://sciencechina.cn/scichina2/style/sourcelist25_26.pdf"
+        },
+        {
+          "code": "core",
+          "labelZh": "北大核心 2023",
+          "labelEn": "Chinese core 2023",
+          "source": "https://kyc.webs.nbpt.edu.cn/_upload/article/files/63/28/89215fe74706a7280e2f84ef765e/31eb9ee4-8479-4eb0-9d12-c15dd2879955.pdf"
+        }
+      ]
+    },
+    {
+      "name": "中国造船",
+      "nameEn": "Shipbuilding of China",
+      "topics": [
+        "structures",
+        "aeroelastic"
+      ],
+      "priorityZh": "浮式系统与海上结构设计",
+      "priorityEn": "Floating systems and offshore structural design",
+      "homepage": "https://pubs.cstam.org.cn/zgzc",
+      "scopeUrl": "https://pubs.cstam.org.cn/zgzc",
+      "scopeZh": "面向船舶与海洋工程的设计、结构、力学及工程技术研究。",
+      "scopeEn": "Design, structures, mechanics and engineering technology for ships and offshore engineering.",
+      "fitZh": "适合浮式风机整体—局部耦合、海上结构强度与疲劳，以及支撑设计决策的结构评价。",
+      "fitEn": "Suitable for global–local coupling in floating wind turbines, offshore strength and fatigue, and structural assessment supporting design decisions.",
+      "adviceZh": "建立清晰的船海工程背景与设计问题，量化结构方案改进和适用边界；官网暂不可访问时可查看官方学会入口。",
+      "adviceEn": "Define the marine design problem, quantify structural improvements and validity limits; the official society portal provides an alternative information source.",
+      "cover": "./assets/journals/cn-china-shipbuilding.png",
+      "checkedDate": "2026-11-18",
+      "indexing": [
+        {
+          "code": "ei",
+          "labelZh": "EI · 官网列示",
+          "labelEn": "EI · Official listing",
+          "source": "https://pubs.cstam.org.cn/zgzc"
+        },
+        {
+          "code": "cscd",
+          "labelZh": "CSCD 2025–2026 · 核心库",
+          "labelEn": "CSCD 2025–2026 · Core",
+          "source": "http://sciencechina.cn/scichina2/style/sourcelist25_26.pdf"
+        },
+        {
+          "code": "core",
+          "labelZh": "北大核心 2023",
+          "labelEn": "Chinese core 2023",
+          "source": "https://kyc.webs.nbpt.edu.cn/_upload/article/files/63/28/89215fe74706a7280e2f84ef765e/31eb9ee4-8479-4eb0-9d12-c15dd2879955.pdf"
+        }
+      ]
+    },
+    {
+      "name": "力学学报",
+      "nameEn": "Chinese Journal of Theoretical and Applied Mechanics",
+      "topics": [
+        "structures",
+        "aeroelastic"
+      ],
+      "priorityZh": "原创力学机理与理论方法",
+      "priorityEn": "Original mechanics and theoretical methods",
+      "homepage": "https://lxxb.cstam.org.cn/",
+      "scopeUrl": "https://pubs.cstam.org.cn/lxxb",
+      "scopeZh": "覆盖理论与应用力学，适合具有原创性、普适性的固体、流体及耦合力学研究。",
+      "scopeEn": "Theoretical and applied mechanics, with original and generalisable advances in solids, fluids and coupled systems.",
+      "fitZh": "可考虑弯扭耦合、非线性动力学、多尺度损伤、复材界面断裂和气弹耦合中的新力学认识。",
+      "fitEn": "Consider new mechanics in bend–twist coupling, nonlinear dynamics, multiscale damage, composite-interface fracture or aeroelasticity.",
+      "adviceZh": "从具体叶片算例提炼普适机理、原创理论或方法，并用严格推导与独立验证支撑，单纯工程参数对比不足。",
+      "adviceEn": "Extract general mechanisms or original theory/methods from the blade application, supported by rigorous derivation and independent validation.",
+      "cover": "./assets/journals/cn-cjtam.jpg",
+      "checkedDate": "2026-11-18",
+      "indexing": [
+        {
+          "code": "ei",
+          "labelZh": "EI · 官网列示",
+          "labelEn": "EI · Official listing",
+          "source": "https://pubs.cstam.org.cn/lxxb"
+        },
+        {
+          "code": "cscd",
+          "labelZh": "CSCD 2025–2026 · 核心库",
+          "labelEn": "CSCD 2025–2026 · Core",
+          "source": "http://sciencechina.cn/scichina2/style/sourcelist25_26.pdf"
+        },
+        {
+          "code": "core",
+          "labelZh": "北大核心 2023",
+          "labelEn": "Chinese core 2023",
+          "source": "https://kyc.webs.nbpt.edu.cn/_upload/article/files/63/28/89215fe74706a7280e2f84ef765e/31eb9ee4-8479-4eb0-9d12-c15dd2879955.pdf"
+        }
+      ]
+    },
+    {
+      "name": "固体力学学报",
+      "nameEn": "Chinese Journal of Solid Mechanics",
+      "topics": [
+        "structures"
+      ],
+      "priorityZh": "复材本构、失稳与断裂",
+      "priorityEn": "Composite constitutive models, instability and fracture",
+      "homepage": "https://pubs.cstam.org.cn/cjsm",
+      "scopeUrl": "https://pubs.cstam.org.cn/cjsm",
+      "scopeZh": "关注固体力学基础与应用，包括材料本构、变形与失稳、损伤断裂及计算力学。",
+      "scopeEn": "Fundamental and applied solid mechanics, including constitutive behaviour, deformation, instability, damage, fracture and computational mechanics.",
+      "fitZh": "适合复材本构、超厚层合板失稳、界面断裂及多尺度损伤；论文主线应有明确固体力学贡献。",
+      "fitEn": "Suitable for composite constitutive behaviour, thick-laminate instability, interface fracture and multiscale damage with a clear solid-mechanics contribution.",
+      "adviceZh": "强化理论或数值方法的严谨性，完成基准与试验校验；此处为中文《固体力学学报》，不套用英文对应刊的收录信息。",
+      "adviceEn": "Strengthen theoretical or numerical rigour and benchmark/experimental validation. This is the Chinese journal; indexing is not borrowed from its English counterpart.",
+      "cover": "./assets/journals/cn-solid-mechanics.png",
+      "checkedDate": "2026-11-18",
+      "indexing": [
+        {
+          "code": "cscd",
+          "labelZh": "CSCD 2025–2026 · 核心库",
+          "labelEn": "CSCD 2025–2026 · Core",
+          "source": "http://sciencechina.cn/scichina2/style/sourcelist25_26.pdf"
+        },
+        {
+          "code": "core",
+          "labelZh": "北大核心 2023",
+          "labelEn": "Chinese core 2023",
+          "source": "https://kyc.webs.nbpt.edu.cn/_upload/article/files/63/28/89215fe74706a7280e2f84ef765e/31eb9ee4-8479-4eb0-9d12-c15dd2879955.pdf"
+        }
+      ]
+    },
+    {
+      "name": "空气动力学学报",
+      "nameEn": "Acta Aerodynamica Sinica",
+      "topics": [
+        "aeroelastic",
+        "testing"
+      ],
+      "priorityZh": "柔性叶片气弹与非定常气动",
+      "priorityEn": "Flexible-blade aeroelasticity and unsteady aerodynamics",
+      "homepage": "https://kqdlxxb.xml-journal.net/",
+      "scopeUrl": "https://kqdlxxb.xml-journal.net/tougaozhinan",
+      "scopeZh": "覆盖空气动力学基础和工程应用，可关注气动力、流动机理、气弹耦合及风洞试验。",
+      "scopeEn": "Fundamental and applied aerodynamics, including aerodynamic loads, flow physics, aeroelastic coupling and wind-tunnel tests.",
+      "fitZh": "适合柔性叶片气弹、非定常气动载荷、流固耦合和风洞验证，尤其是能解释气动机理的研究。",
+      "fitEn": "A fit for flexible-blade aeroelasticity, unsteady aerodynamic loads, fluid–structure interaction and wind-tunnel validation that explain aerodynamic mechanisms.",
+      "adviceZh": "围绕流动或气动力机理组织创新，数值研究补足验证与确认；当前仅展示已核实的 CSCD 与北大核心收录。",
+      "adviceEn": "Build the contribution around flow or aerodynamic mechanisms, with verification and validation. Only verified CSCD and Chinese-core coverage is displayed.",
+      "cover": "./assets/journals/cn-aerodynamics.jpg",
+      "checkedDate": "2026-11-18",
+      "indexing": [
+        {
+          "code": "cscd",
+          "labelZh": "CSCD 2025–2026 · 核心库",
+          "labelEn": "CSCD 2025–2026 · Core",
+          "source": "http://sciencechina.cn/scichina2/style/sourcelist25_26.pdf"
+        },
+        {
+          "code": "core",
+          "labelZh": "北大核心 2023",
+          "labelEn": "Chinese core 2023",
+          "source": "https://kyc.webs.nbpt.edu.cn/_upload/article/files/63/28/89215fe74706a7280e2f84ef765e/31eb9ee4-8479-4eb0-9d12-c15dd2879955.pdf"
+        }
+      ]
+    },
+    {
+      "name": "海洋工程",
+      "nameEn": "The Ocean Engineering",
+      "topics": [
+        "aeroelastic",
+        "structures",
+        "testing"
+      ],
+      "priorityZh": "海洋环境与风浪耦合",
+      "priorityEn": "Marine environments and wind–wave coupling",
+      "homepage": "http://www.theoceaneng.cn/",
+      "scopeUrl": "http://www.theoceaneng.cn/",
+      "scopeZh": "面向海洋工程的理论与应用，可关注海上工程结构、环境载荷、动力响应及试验研究。",
+      "scopeEn": "Theoretical and applied ocean engineering, including offshore structures, environmental loads, dynamic response and experiments.",
+      "fitZh": "适合海上风电载荷、风浪—平台耦合响应、海洋复材服役和工程验证；单纯干态材料试样研究匹配度较弱。",
+      "fitEn": "Suitable for offshore wind loads, wind–wave/platform coupling, marine-composite service behaviour and engineering validation.",
+      "adviceZh": "量化海洋环境带来的影响并说明工程适用范围；此处为中文《海洋工程》，不套用英文同领域期刊的指标。",
+      "adviceEn": "Quantify the role of the marine environment and the engineering validity range. Metrics from similarly named English journals are not applied here.",
+      "checkedDate": "2026-11-18",
+      "indexing": [
+        {
+          "code": "cscd",
+          "labelZh": "CSCD 2025–2026 · 核心库",
+          "labelEn": "CSCD 2025–2026 · Core",
+          "source": "http://sciencechina.cn/scichina2/style/sourcelist25_26.pdf"
+        },
+        {
+          "code": "core",
+          "labelZh": "北大核心 2023",
+          "labelEn": "Chinese core 2023",
+          "source": "https://kyc.webs.nbpt.edu.cn/_upload/article/files/63/28/89215fe74706a7280e2f84ef765e/31eb9ee4-8479-4eb0-9d12-c15dd2879955.pdf"
+        }
+      ]
+    }
   ]
 };

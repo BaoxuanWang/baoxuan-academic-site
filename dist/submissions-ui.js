@@ -12,6 +12,7 @@
   const topicControl = document.getElementById('submission-topic');
   const rankControl = document.getElementById('submission-quartile');
   const pastControl = document.getElementById('submission-show-past');
+  const chineseIndexControl = document.getElementById('submission-cn-index');
   function issueState(item) {
     if (item.closed || (item.deadline && item.deadline < dateKey())) return { cls: 'closed', label: t('已截止', 'Closed'), closed: true };
     if (item.openDate && item.openDate > dateKey()) return { cls: 'pending', label: t('尚未开放', 'Not yet open') };
@@ -46,6 +47,27 @@
       else actions.append(link(item.scopeUrl, t('范围与投稿说明 ↗', 'Scope & journal information ↗')));
       card.append(actions); return card;
     }));
+    const selectedChinese = (data.chineseJournals || []).filter(item => (topicControl.value === 'all' || item.topics.includes(topicControl.value)) && (chineseIndexControl.value === 'all' || item.indexing.some(index => index.code === chineseIndexControl.value)));
+    const chineseGrid = document.getElementById('submission-chinese-journals');
+    chineseGrid.replaceChildren(...selectedChinese.map(item => {
+      const card = el('article', 'submission-journal');
+      const header = el('div', 'submission-journal-head');
+      if (item.cover) { const cover = link(item.homepage, '', 'submission-cover'); const img = el('img'); img.src = item.cover; img.alt = `${item.name} cover`; img.loading = 'lazy'; cover.append(img); header.append(cover); }
+      const heading = el('div'); heading.append(el('span', 'submission-priority', copy(item, 'priority')), el('h4'));
+      heading.lastChild.append(link(item.homepage, `${language === 'en' ? item.nameEn : item.name} ↗`));
+      const metrics = el('div', 'submission-metrics');
+      item.indexing.forEach(index => metrics.append(link(index.source, copy(index, 'label'))));
+      heading.append(metrics); header.append(heading); card.append(header);
+      card.append(el('p', 'submission-scope', copy(item, 'scope')), detail(t('适合的研究：', 'Research fit: '), copy(item, 'fit')));
+      const more = el('details', 'submission-analysis'); more.append(el('summary', '', t('投稿前的重点与范围依据', 'What to strengthen before submission')));
+      more.append(el('p', '', copy(item, 'advice')), link(item.scopeUrl, t('期刊范围与投稿说明 ↗', 'Scope & author guidance ↗'))); card.append(more);
+      card.append(el('p', 'submission-check', t(`资料核验：${item.checkedDate}`, `Information checked: ${item.checkedDate}`)));
+      const actions = el('div', 'submission-actions'); actions.append(link(item.homepage, t('期刊主页 ↗', 'Journal website ↗')));
+      if (item.scopeUrl !== item.homepage) actions.append(link(item.scopeUrl, t('范围与投稿说明 ↗', 'Scope & author guidance ↗')));
+      card.append(actions);
+      return card;
+    }));
+    if (!selectedChinese.length) chineseGrid.append(el('p', 'submission-empty', t('该筛选下暂无推荐中文期刊。', 'No Chinese journals match these filters.')));
     const selectedIssues = data.issues.filter(item => matches(item, item.jcr) && (pastControl.checked || !issueState(item).closed)).sort((a,b) => String(a.deadline || '9999').localeCompare(String(b.deadline || '9999')));
     issueGrid.replaceChildren(...selectedIssues.map(item => {
       const card = el('article', 'submission-issue'); const state = issueState(item);
@@ -63,11 +85,11 @@
     }));
     if (!selected.length) journalGrid.append(el('p', 'submission-empty', t('该筛选下暂无推荐期刊。', 'No journals match these filters.')));
     if (!selectedIssues.length) issueGrid.append(el('p', 'submission-empty', t('该筛选下暂无未截止的已核验特刊，可查看期刊官网征稿目录。', 'No tracked calls match these filters; check the journal call directories.')));
-    document.getElementById('submission-count').textContent = t(`${selected.length} 本期刊 · ${selectedIssues.length} 个特刊`, `${selected.length} journals · ${selectedIssues.length} calls`);
+    document.getElementById('submission-count').textContent = t(`${selected.length} 本国际期刊 · ${selectedChinese.length} 本中文期刊 · ${selectedIssues.length} 个特刊`, `${selected.length} international · ${selectedChinese.length} Chinese journals · ${selectedIssues.length} calls`);
     const attempt = data.generatedAt ? new Date(data.generatedAt).toLocaleString(language === 'zh' ? 'zh-CN' : 'en-GB', { timeZone: 'Asia/Shanghai', dateStyle: 'medium', timeStyle: 'short' }) : data.curatedDate;
     document.getElementById('submission-updated').textContent = t(`每日检查已追踪征稿 · 最近检查 ${attempt}`, `Tracked calls checked daily · Last check ${attempt}`);
   }
-  [topicControl, rankControl, pastControl].forEach(control => control.addEventListener('change', render));
+  [topicControl, rankControl, pastControl, chineseIndexControl].forEach(control => control.addEventListener('change', render));
   document.addEventListener('site:language', event => { language = event.detail.language; render(); });
   render();
 })();

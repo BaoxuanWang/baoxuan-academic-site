@@ -217,17 +217,21 @@
             <div class="section-heading conference-heading">
               <span class="section-index">07 /</span>
               <div><h2 id="submissions-title" data-zh="叶片结构投稿指南" data-en="Publishing blade-structure research">叶片结构投稿指南</h2>
-                <p data-zh="围绕叶片结构与复材失效、浮式气弹耦合、载荷重构与测试，梳理 JCR Q1 / Q2 期刊与相关特刊。" data-en="JCR Q1/Q2 venues and special issues for blade structures, composite failure, floating-wind aeroelasticity, load reconstruction and testing.">围绕叶片结构与复材失效、浮式气弹耦合、载荷重构与测试，梳理 JCR Q1 / Q2 期刊与相关特刊。</p>
+                <p data-zh="围绕叶片结构与复材失效、浮式气弹耦合、载荷重构与测试，梳理国际 Q1 / Q2 期刊、优质中文期刊与相关特刊。" data-en="International Q1/Q2 journals, Chinese-language journals and special issues for blade structures, composite failure, floating-wind aeroelasticity, load reconstruction and testing.">围绕叶片结构与复材失效、浮式气弹耦合、载荷重构与测试，梳理国际 Q1 / Q2 期刊、优质中文期刊与相关特刊。</p>
               </div>
             </div>
             <div class="submission-controls">
               <label><span data-zh="研究主题" data-en="Research topic">研究主题</span><select id="submission-topic"><option value="all" data-zh="全部方向" data-en="All topics">全部方向</option><option value="structures" data-zh="结构与复材失效" data-en="Structures & composite failure">结构与复材失效</option><option value="aeroelastic" data-zh="气弹耦合与海上风能" data-en="Aeroelasticity & offshore wind">气弹耦合与海上风能</option><option value="testing" data-zh="载荷重构与测试" data-en="Load reconstruction & testing">载荷重构与测试</option></select></label>
-              <label><span data-zh="JCR 分区" data-en="JCR quartile">JCR 分区</span><select id="submission-quartile"><option value="all" data-zh="Q1 + Q2" data-en="Q1 + Q2">Q1 + Q2</option><option value="1">Q1</option><option value="2">Q2</option></select></label>
+              <label><span data-zh="国际期刊分区" data-en="International JCR quartile">国际期刊分区</span><select id="submission-quartile"><option value="all" data-zh="Q1 + Q2" data-en="Q1 + Q2">Q1 + Q2</option><option value="1">Q1</option><option value="2">Q2</option></select></label>
               <span id="submission-count" aria-live="polite"></span>
             </div>
-            <div class="submission-subhead"><h3 data-zh="适合的期刊与投稿重点" data-en="Journal fit & manuscript strategy">适合的期刊与投稿重点</h3><span data-zh="按研究契合度整理" data-en="Curated by research fit">按研究契合度整理</span></div>
-            <p class="submission-note" data-zh="期刊卡片采用本站 JCR 2025 最优学科分区口径，指标可点击溯源；研究契合度是根据公开范围与现有工作作出的判断，不代表录用概率。" data-en="Journal cards use the site's JCR 2025 best-category quartile record, with linked metric sources. Fit is an assessment of published scope and current research, not an acceptance prediction.">期刊卡片采用本站 JCR 2025 最优学科分区口径，指标可点击溯源；研究契合度是根据公开范围与现有工作作出的判断，不代表录用概率。</p>
+            <div class="submission-subhead"><h3 data-zh="国际期刊与投稿重点" data-en="International journals & manuscript strategy">国际期刊与投稿重点</h3><span data-zh="按研究契合度整理" data-en="Curated by research fit">按研究契合度整理</span></div>
+            <p class="submission-note" data-zh="国际期刊采用本站 JCR 2025 最优学科分区口径，指标可点击溯源；研究契合度是根据公开范围与现有工作作出的判断，不代表录用概率。" data-en="International journals use the site's JCR 2025 best-category quartile record, with linked metric sources. Fit is an assessment of published scope and current research, not an acceptance prediction.">国际期刊采用本站 JCR 2025 最优学科分区口径，指标可点击溯源；研究契合度是根据公开范围与现有工作作出的判断，不代表录用概率。</p>
             <div class="submission-journal-grid" id="submission-journals" aria-live="polite"></div>
+            <div class="submission-subhead submission-calls-head"><h3 data-zh="中文期刊与投稿重点" data-en="Chinese journals & manuscript strategy">中文期刊与投稿重点</h3><span data-zh="优先考虑 EI，兼顾 CSCD 与北大核心" data-en="EI first, with CSCD and Chinese core venues">优先考虑 EI，兼顾 CSCD 与北大核心</span></div>
+            <div class="submission-controls"><label><span data-zh="中文期刊收录" data-en="Chinese journal indexing">中文期刊收录</span><select id="submission-cn-index"><option value="all" data-zh="全部推荐中文期刊" data-en="All Chinese journals">全部推荐中文期刊</option><option value="ei">EI Compendex</option><option value="cscd">CSCD</option><option value="core" data-zh="北大中文核心" data-en="Peking University Chinese core">北大中文核心</option></select></label></div>
+            <p class="submission-note" data-zh="EI 依据期刊或主办机构的收录说明；CSCD 与北大核心采用注明版次的名单，标签均可点击溯源。期刊级收录不等同于单篇论文已检索。" data-en="EI follows journal or host statements; CSCD and Chinese core use the listed editions. Badges link to evidence; journal coverage does not certify individual article indexing.">EI 依据期刊或主办机构的收录说明；CSCD 与北大核心采用注明版次的名单，标签均可点击溯源。期刊级收录不等同于单篇论文已检索。</p>
+            <div class="submission-journal-grid" id="submission-chinese-journals" aria-live="polite"></div>
             <div class="submission-subhead submission-calls-head"><h3 data-zh="在征特刊与重点跟踪" data-en="Open special issues & tracked calls">在征特刊与重点跟踪</h3><label class="submission-past"><input type="checkbox" id="submission-show-past" /><span data-zh="含已截止" data-en="Include closed">含已截止</span></label></div>
             <p class="submission-note" id="submission-updated"></p>
             <div class="submission-issue-grid" id="submission-issues" aria-live="polite"></div>
@@ -284,8 +288,8 @@
     <script src="./service.js?v=20261114-1"></script>
     <script src="./conferences.js?v=20261111-1"></script>
     <script src="./script.js?v=20261116-1"></script>
-    <script src="./submissions.js?v=20261116-1"></script>
-    <script src="./submissions-ui.js?v=20261116-1"></script>
+    <script src="./submissions.js?v=20261118-1"></script>
+    <script src="./submissions-ui.js?v=20261118-1"></script>
     <script src="./funding-data.js?v=20261118-1"></script>
     <script src="./funding-ui.js?v=20261118-1"></script>
     <script src="./gold-history.js"></script>
